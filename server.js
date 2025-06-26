@@ -5,11 +5,13 @@ const cors = require("cors");
 const app = express();
 
 const userRoutes = require("./routes/userRoutes");
+const skillroutes = require("./routes/skillRoutes");
 
 app.use(cors());
 app.use(express.json());
 
 app.use("/api/user", userRoutes);
+app.use("/api/user", skillroutes);
 
 app.get("/", (req, res) => {
   res.send("Resume Builder API is running...");
