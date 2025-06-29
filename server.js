@@ -8,6 +8,7 @@ const skillroutes = require("./routes/skillRoutes");
 const achievementRoutes = require("./routes/achievementRoutes");
 const educationRoutes = require("./routes/educationRoutes");
 const experienceRoutes = require("./routes/experienceRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use("/api/user", skillroutes);
 app.use("/api/user", achievementRoutes);
 app.use("/api/user", educationRoutes);
 app.use("/api/user", experienceRoutes);
+app.use("/api/user", projectRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

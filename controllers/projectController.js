@@ -5,7 +5,7 @@ exports.addProject = async (req, res) => {
     const { userId } = req.params;
     const data = req.body;
 
-    const projectRef = await db
+    const projectRef = db
       .collection("users")
       .doc(userId)
       .collection("resume")
@@ -14,7 +14,7 @@ exports.addProject = async (req, res) => {
 
     const newProject = await projectRef.add(data);
 
-    res.status(200).json({ message: "Project added successfully", id: newProject.id });
+    res.status(200).json({ message: "Project added", id: newProject.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -24,7 +24,7 @@ exports.getProjects = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const projectsSnap = await db
+    const projectSnap = await db
       .collection("users")
       .doc(userId)
       .collection("resume")
@@ -32,14 +32,16 @@ exports.getProjects = async (req, res) => {
       .collection("items")
       .get();
 
-    const projects = projectsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const projects = projectSnap.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 exports.deleteProject = async (req, res) => {
   try {
@@ -54,7 +56,7 @@ exports.deleteProject = async (req, res) => {
       .doc(projectId)
       .delete();
 
-    res.status(200).json({ message: "Project deleted successfully" });
+    res.status(200).json({ message: "Project deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
