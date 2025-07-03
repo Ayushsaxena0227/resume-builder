@@ -49,7 +49,7 @@ const PersonalInfo = () => {
   };
 
   return (
-    <section className="py-16 px-[10vw] bg-skills-gradient min-h-screen font-sans">
+    <section className=" px-[10vw] bg-skills-gradient min-h-screen font-sans">
       <ToastContainer />
       <h2 className="text-4xl font-bold text-white text-center mb-10">
         PERSONAL INFO

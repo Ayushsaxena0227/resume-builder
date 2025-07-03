@@ -75,7 +75,7 @@ const Projects = () => {
       await axios.delete(
         `http://localhost:5000/api/user/${userId}/projects/${projectId}`
       );
-      fetchProjects(); // Refresh after delete
+      fetchProjects();
     } catch (error) {
       console.error("Error deleting:", error);
     }
@@ -86,7 +86,7 @@ const Projects = () => {
   }, []);
 
   return (
-    <section className="py-24 px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
+    <section className=" px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold">PROJECTS</h2>
         <div className="w-32 h-1 bg-purple-500 mx-auto mt-4"></div>
@@ -95,7 +95,6 @@ const Projects = () => {
         </p>
       </div>
 
-      {/* 🔄 Loader or Project Cards */}
       {loading ? (
         <ProjectLoader count={loaderCount} />
       ) : (
@@ -120,7 +119,6 @@ const Projects = () => {
         Add More Projects
       </p>
 
-      {/* 🚀 Add Project Form */}
       <form
         onSubmit={handleAdd}
         className="bg-[#0d081f] p-6 rounded-lg border border-gray-700 max-w-2xl mx-auto space-y-4 shadow-lg"

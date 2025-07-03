@@ -63,7 +63,7 @@ export const Education = () => {
   }, []);
 
   return (
-    <section className="py-24 px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
+    <section className=" px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
       <ToastContainer />
 
       <div className="text-center mb-12">

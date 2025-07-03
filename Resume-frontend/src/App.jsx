@@ -3,8 +3,9 @@ import Sidebar from "./components/Sidebar";
 import PersonalInfo from "./pages/Personalinfo";
 import Skills from "./pages/skills";
 import Projects from "./pages/Projects/Projects";
-// import Education from "./pages/Education/Education";
 import { Education } from "./pages/Education/Education";
+import Experience from "./pages/Experience/Experience";
+import Achievements from "./pages/Achievment/Achievment";
 
 const Placeholder = ({ name }) => (
   <div className="text-xl font-semibold">{name} Page Coming Soon...</div>
@@ -21,14 +22,8 @@ const App = () => {
           <Route path="/skills" element={<Skills />} />
           <Route path="/education" element={<Education />} />
           <Route path="/projects" element={<Projects />} />
-          <Route
-            path="/experience"
-            element={<Placeholder name="Experience" />}
-          />
-          <Route
-            path="/achievements"
-            element={<Placeholder name="Achievements" />}
-          />
+          <Route path="/experience" element={<Experience />} />
+          <Route path="/achievements" element={<Achievements />} />
           <Route
             path="/resume-preview"
             element={<Placeholder name="Resume Preview" />}
