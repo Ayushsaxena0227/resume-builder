@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProjectCard from "./ProjectCard";
 
-// 🔄 Dynamic Skeleton Loader Component
 const ProjectLoader = ({ count = 3 }) => {
   return (
     <div className="mt-12 grid gap-6 sm:grid-cols-2 animate-pulse">
@@ -24,8 +23,8 @@ const ProjectLoader = ({ count = 3 }) => {
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true); // 🔁 Loading state
-  const [loaderCount, setLoaderCount] = useState(3); // 💾 Loader count
+  const [loading, setLoading] = useState(true);
+  const [loaderCount, setLoaderCount] = useState(3);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -43,12 +42,13 @@ const Projects = () => {
       );
       const data = res.data || [];
       setProjects(data);
+      console.log(projects);
       setLoaderCount(data.length > 0 ? data.length : 3);
     } catch (error) {
       console.error("Error fetching projects:", error);
-      setLoaderCount(3); // Fallback
+      setLoaderCount(3);
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 

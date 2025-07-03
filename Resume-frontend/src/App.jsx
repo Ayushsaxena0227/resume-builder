@@ -6,6 +6,7 @@ import Projects from "./pages/Projects/Projects";
 import { Education } from "./pages/Education/Education";
 import Experience from "./pages/Experience/Experience";
 import Achievements from "./pages/Achievment/Achievment";
+import ResumePreview from "./pages/Resumepreview/Resumepreview";
 
 const Placeholder = ({ name }) => (
   <div className="text-xl font-semibold">{name} Page Coming Soon...</div>
@@ -24,10 +25,7 @@ const App = () => {
           <Route path="/projects" element={<Projects />} />
           <Route path="/experience" element={<Experience />} />
           <Route path="/achievements" element={<Achievements />} />
-          <Route
-            path="/resume-preview"
-            element={<Placeholder name="Resume Preview" />}
-          />
+          <Route path="/resume-preview" element={<ResumePreview />} />
         </Routes>
       </div>
     </div>

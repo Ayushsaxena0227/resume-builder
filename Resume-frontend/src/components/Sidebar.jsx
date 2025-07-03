@@ -15,7 +15,7 @@ const Sidebar = () => {
   return (
     <div className="h-screen w-64 bg-gradient-to-b from-slate-900 to-slate-700 text-white p-5 fixed ">
       <h2 className="text-2xl font-bold mb-8">🧾 Resume Builder</h2>
-      <nav className="space-y-4">
+      <nav className="space-y-2">
         {links.map((link) => (
           <NavLink
             key={link.path}

@@ -3,6 +3,40 @@ import { getPersonalInfo, updatePersonalInfo } from "../services/userService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Personal Info Loader Component
+const PersonalInfoLoader = () => {
+  return (
+    <div className="max-w-2xl mx-auto animate-pulse">
+      <div className="flex flex-col gap-6">
+        {[
+          "Name",
+          "Email",
+          "Phone",
+          "GitHub",
+          "LinkedIn",
+          "Address",
+          "Summary",
+        ].map((field, index) => (
+          <div key={index} className="flex flex-col gap-2">
+            <div className="flex items-center gap-4">
+              <div className="w-24">
+                <div className="h-6 bg-gray-600 rounded w-3/4"></div>
+              </div>
+              <div className="flex-1">
+                <div className="h-10 bg-gray-700 rounded w-full"></div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <div className="mt-6">
+          <div className="h-10 bg-gray-600 rounded w-full"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PersonalInfo = () => {
   const userId = "ayush123"; // later make this dynamic
   const [formData, setFormData] = useState({
@@ -21,10 +55,12 @@ const PersonalInfo = () => {
     const fetchData = async () => {
       try {
         const info = await getPersonalInfo(userId);
+        console.log(info);
         setFormData(info);
-        setLoading(false);
       } catch (err) {
         toast.error("Failed to load data");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -49,7 +85,7 @@ const PersonalInfo = () => {
   };
 
   return (
-    <section className=" px-[10vw] bg-skills-gradient min-h-screen font-sans">
+    <section className="px-[10vw] bg-skills-gradient min-h-screen font-sans">
       <ToastContainer />
       <h2 className="text-4xl font-bold text-white text-center mb-10">
         PERSONAL INFO
@@ -57,7 +93,7 @@ const PersonalInfo = () => {
       <div className="w-24 h-1 bg-purple-500 mx-auto mb-6"></div>
 
       {loading ? (
-        <div className="text-center text-white">Loading...</div>
+        <PersonalInfoLoader />
       ) : (
         <div className="max-w-2xl mx-auto">
           <div className="flex flex-col gap-6">

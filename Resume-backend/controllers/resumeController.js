@@ -13,28 +13,20 @@ exports.getFullResume = async (req, res) => {
     const personalInfoSnap = await resumeRef.doc("personalInfo").get();
     const personalInfo = personalInfoSnap.exists ? personalInfoSnap.data() : {};
 
-    const [
-      skills,
-      education,
-      achievements,
-      certificates,
-      experience,
-      projects,
-    ] = await Promise.all([
-      fetchCollection("skills"),
-      fetchCollection("education"),
-      fetchCollection("achievements"),
-      //   fetchCollection("certificates"),
-      fetchCollection("experience"),
-      fetchCollection("projects"),
-    ]);
+    const [skills, education, achievements, experience, projects] =
+      await Promise.all([
+        fetchCollection("skills"),
+        fetchCollection("education"),
+        fetchCollection("achievements"),
+        fetchCollection("experience"),
+        fetchCollection("projects"),
+      ]);
 
     const fullResume = {
       personalInfo,
       skills,
       education,
       achievements,
-      certificates,
       experience,
       projects,
     };
