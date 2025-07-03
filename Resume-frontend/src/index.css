@@ -23,3 +23,6 @@ html {
     clip-path: polygon(0 0, 100% 0, 100% 98%, 75% 96%, 0 100%);
   }
 }
+.form-input {
+  @apply w-full p-3 rounded-md bg-[#131025] text-white border border-gray-600 focus:outline-none focus:border-purple-500;
+}

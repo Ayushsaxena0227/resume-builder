@@ -63,7 +63,7 @@ const PersonalInfo = () => {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
-                <span className="text-black text-lg font-semibold w-24">
+                <span className="text-white text-lg font-semibold w-24">
                   Name:
                 </span>
                 <input
@@ -79,7 +79,7 @@ const PersonalInfo = () => {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
-                <span className="text-black text-lg font-semibold w-24">
+                <span className="text-white text-lg font-semibold w-24">
                   Email:
                 </span>
                 <input
@@ -95,7 +95,7 @@ const PersonalInfo = () => {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
-                <span className="text-black text-lg font-semibold w-24">
+                <span className="text-white text-lg font-semibold w-24">
                   Phone:
                 </span>
                 <input
@@ -111,7 +111,7 @@ const PersonalInfo = () => {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
-                <span className="text-black text-lg font-semibold w-24">
+                <span className="text-white text-lg font-semibold w-24">
                   GitHub:
                 </span>
                 <input
@@ -127,7 +127,7 @@ const PersonalInfo = () => {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
-                <span className="text-black text-lg font-semibold w-24">
+                <span className="text-white text-lg font-semibold w-24">
                   LinkedIn:
                 </span>
                 <input
@@ -143,7 +143,7 @@ const PersonalInfo = () => {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
-                <span className="text-black text-lg font-semibold w-24">
+                <span className="text-white text-lg font-semibold w-24">
                   Address:
                 </span>
                 <input
@@ -159,7 +159,7 @@ const PersonalInfo = () => {
 
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-4">
-                <span className="text-black text-lg font-semibold w-24">
+                <span className="text-white text-lg font-semibold w-24">
                   Summary:
                 </span>
                 <input

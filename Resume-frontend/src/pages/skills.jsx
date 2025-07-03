@@ -3,20 +3,38 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const SkillsLoader = ({ count = 6 }) => {
+  return (
+    <div className="flex flex-wrap justify-center gap-4 animate-pulse">
+      {Array.from({ length: count }).map((_, index) => (
+        <div key={index} className="h-10 w-24 bg-gray-700 rounded-full"></div>
+      ))}
+    </div>
+  );
+};
+
 const Skills = () => {
   const [skills, setSkills] = useState([]);
   const [newSkill, setNewSkill] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [loaderCount, setLoaderCount] = useState(6);
 
   const userId = "ayush123"; // hardcoded for now (make dynamic later)
 
   const fetchSkills = async () => {
     try {
+      setLoading(true);
       const res = await axios.get(
         `http://localhost:5000/api/user/${userId}/skills`
       );
-      setSkills(res.data);
+      const data = res.data || [];
+      setSkills(data);
+      setLoaderCount(data.length > 0 ? data.length : 6);
     } catch (error) {
       toast.error("Failed to fetch skills");
+      setLoaderCount(6);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -24,16 +42,12 @@ const Skills = () => {
     fetchSkills();
   }, []);
 
-  // Add skill
   const handleAddSkill = async () => {
     if (!newSkill.trim()) return;
     try {
-      const res = await axios.post(
-        `http://localhost:5000/api/user/${userId}/skills`,
-        {
-          name: newSkill,
-        }
-      );
+      await axios.post(`http://localhost:5000/api/user/${userId}/skills`, {
+        name: newSkill,
+      });
       toast.success("Skill added!");
       setNewSkill("");
       fetchSkills();
@@ -42,7 +56,6 @@ const Skills = () => {
     }
   };
 
-  // Delete skill
   const handleDelete = async (id) => {
     try {
       await axios.delete(
@@ -73,27 +86,35 @@ const Skills = () => {
         />
         <button
           onClick={handleAddSkill}
-          className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-md hover:opacity-90 transition"
+          className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold rounded-md hover:opacity-80 transition"
         >
           Add Skill
         </button>
       </div>
 
       <div className="flex flex-wrap justify-center gap-4">
-        {skills.map((skill) => (
-          <div
-            key={skill.id}
-            className="flex items-center px-4 py-2 bg-[#0d081f] text-white border border-gray-600 rounded-full shadow-md backdrop-blur-md"
-          >
-            <span className="mr-2">{skill.name}</span>
-            <button
-              onClick={() => handleDelete(skill.id)}
-              className="text-sm text-red-400 hover:text-red-600"
+        {loading ? (
+          <SkillsLoader count={loaderCount} />
+        ) : skills.length > 0 ? (
+          skills.map((skill) => (
+            <div
+              key={skill.id}
+              className="flex items-center px-4 py-2 bg-[#0d081f] text-white border border-gray-600 rounded-full shadow-md backdrop-blur-md"
             >
-              ✕
-            </button>
+              <span className="mr-2">{skill.name}</span>
+              <button
+                onClick={() => handleDelete(skill.id)}
+                className="text-sm text-red-400 hover:text-red-600"
+              >
+                ✕
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-400 w-full mt-4">
+            No skills added yet.
           </div>
-        ))}
+        )}
       </div>
     </section>
   );
