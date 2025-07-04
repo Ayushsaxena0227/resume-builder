@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import PersonalInfo from "./pages/Personalinfo";
 import Skills from "./pages/skills";
@@ -7,29 +7,85 @@ import { Education } from "./pages/Education/Education";
 import Experience from "./pages/Experience/Experience";
 import Achievements from "./pages/Achievment/Achievment";
 import ResumePreview from "./pages/Resumepreview/Resumepreview";
-
-const Placeholder = ({ name }) => (
-  <div className="text-xl font-semibold">{name} Page Coming Soon...</div>
-);
+import Dashboard from "./pages/Dashboard/Dashboard";
+import Signup from "./pages/Auth/Signup";
+import Login from "./pages/Auth/Login";
+import { useAuth } from "./context/Authcontext";
+import ProtectedRoute from "./pages/Auth/ProtectedRoute";
 
 const App = () => {
+  const { currentUser } = useAuth();
+  console.log(currentUser);
+
   return (
     <div className="flex bg-[#050414]">
-      <Sidebar />
-      <div className="ml-64 p-8 w-full">
+      {currentUser && <Sidebar />}
+      <div className={`${currentUser ? "ml-64" : ""} p-8 w-full`}>
         <Routes>
-          <Route path="/" element={<Placeholder name="Dashboard" />} />
-          <Route path="/personal-info" element={<PersonalInfo />} />
-          <Route path="/skills" element={<Skills />} />
-          <Route path="/education" element={<Education />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/experience" element={<Experience />} />
-          <Route path="/achievements" element={<Achievements />} />
-          <Route path="/resume-preview" element={<ResumePreview />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={currentUser ? <Dashboard /> : <Login />} />
+
+          {/* Protect all these routes */}
+          <Route
+            path="/personal-info"
+            element={
+              <ProtectedRoute>
+                <PersonalInfo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/skills"
+            element={
+              <ProtectedRoute>
+                <Skills />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/education"
+            element={
+              <ProtectedRoute>
+                <Education />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <Projects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/experience"
+            element={
+              <ProtectedRoute>
+                <Experience />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/achievements"
+            element={
+              <ProtectedRoute>
+                <Achievements />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume-preview"
+            element={
+              <ProtectedRoute>
+                <ResumePreview />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
     </div>
   );
 };
-
 export default App;

@@ -3,7 +3,8 @@ const { db } = require("../firebase/config");
 //  Add a new skill
 exports.addSkill = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
     const { name } = req.body;
 
     if (!name)
@@ -29,7 +30,8 @@ exports.addSkill = async (req, res) => {
 //  Get all skills
 exports.getSkills = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
 
     const skillsSnap = await db
       .collection("users")
@@ -53,7 +55,8 @@ exports.getSkills = async (req, res) => {
 //  Delete a skill by skillId
 exports.deleteSkill = async (req, res) => {
   try {
-    const { userId, skillId } = req.params;
+    const { skillId } = req.params;
+    const userId = req.user.uid;
 
     await db
       .collection("users")

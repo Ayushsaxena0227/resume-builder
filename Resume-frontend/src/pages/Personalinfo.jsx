@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { getPersonalInfo, updatePersonalInfo } from "../services/userService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { getAuth } from "firebase/auth";
+import { useAuth } from "../context/Authcontext";
 // Personal Info Loader Component
 const PersonalInfoLoader = () => {
   return (
@@ -38,7 +39,7 @@ const PersonalInfoLoader = () => {
 };
 
 const PersonalInfo = () => {
-  const userId = "ayush123"; // later make this dynamic
+  const { currentUser } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -48,24 +49,26 @@ const PersonalInfo = () => {
     address: "",
     summary: "",
   });
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!currentUser) return;
+
       try {
-        const info = await getPersonalInfo(userId);
-        console.log(info);
+        const token = await currentUser.getIdToken();
+        const info = await getPersonalInfo(currentUser.uid, token); // ✅ Dynamic
         setFormData(info);
       } catch (err) {
-        toast.error("Failed to load data");
+        console.error(err);
+        toast.error("Failed to load personal info");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [currentUser]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -76,11 +79,15 @@ const PersonalInfo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!currentUser) return;
+
     try {
-      await updatePersonalInfo(userId, formData);
+      const token = await currentUser.getIdToken(); // ✅ Get fresh token
+      await updatePersonalInfo(currentUser.uid, formData, token); // ✅ Dynamic
       toast.success("Personal info updated!");
     } catch (err) {
-      toast.error("Update failed");
+      console.error(err);
+      toast.error("Failed to update info");
     }
   };
 

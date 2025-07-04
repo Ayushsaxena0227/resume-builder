@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
-
+const verifyToken = require("../Middleware/verifyToken");
 const {
   addSkill,
   getSkills,
   deleteSkill,
-} = require("../controllers/skillcontroller");
+} = require("../controllers/skillController");
 
-router.post("/:userId/skills", addSkill);
-router.get("/:userId/skills", getSkills);
-router.delete("/:userId/skills/:skillId", deleteSkill);
+router.post("/skills", verifyToken, addSkill);
+router.get("/skills", verifyToken, getSkills);
+router.delete("/skills/:skillId", verifyToken, deleteSkill);
 
 module.exports = router;

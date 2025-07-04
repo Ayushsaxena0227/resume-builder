@@ -2,7 +2,8 @@ const { db } = require("../firebase/config");
 
 exports.addExperience = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
     const data = req.body;
 
     const expRef = db
@@ -22,7 +23,8 @@ exports.addExperience = async (req, res) => {
 
 exports.getExperience = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
 
     const expSnap = await db
       .collection("users")
@@ -45,7 +47,8 @@ exports.getExperience = async (req, res) => {
 
 exports.deleteExperience = async (req, res) => {
   try {
-    const { userId, experienceId } = req.params;
+    const { experienceId } = req.params;
+    const userId = req.user.uid;
 
     await db
       .collection("users")

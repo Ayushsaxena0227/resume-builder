@@ -1,8 +1,7 @@
 const { db } = require("../firebase/config");
-// Add or Update Personal Info
 exports.setPersonalInfo = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user.uid;
     const data = req.body;
 
     await db
@@ -20,7 +19,8 @@ exports.setPersonalInfo = async (req, res) => {
 //  Get Personal Info
 exports.getPersonalInfo = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
 
     const doc = await db
       .collection("users")

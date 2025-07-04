@@ -2,7 +2,8 @@ const { db } = require("../firebase/config");
 
 exports.addEducation = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
     const data = req.body;
 
     const eduRef = db
@@ -22,7 +23,8 @@ exports.addEducation = async (req, res) => {
 
 exports.getEducation = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
 
     const eduSnap = await db
       .collection("users")
@@ -45,7 +47,8 @@ exports.getEducation = async (req, res) => {
 
 exports.deleteEducation = async (req, res) => {
   try {
-    const { userId, educationId } = req.params;
+    const { educationId } = req.params;
+    const userId = req.user.uid;
 
     await db
       .collection("users")

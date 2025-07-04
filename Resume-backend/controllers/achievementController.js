@@ -2,7 +2,8 @@ const { db } = require("../firebase/config");
 
 exports.addAchievement = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
     const data = req.body;
 
     const achRef = await db
@@ -24,7 +25,8 @@ exports.addAchievement = async (req, res) => {
 
 exports.getAchievements = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
 
     const achSnap = await db
       .collection("users")
@@ -47,7 +49,8 @@ exports.getAchievements = async (req, res) => {
 
 exports.deleteAchievement = async (req, res) => {
   try {
-    const { userId, achievementId } = req.params;
+    const { achievementId } = req.params;
+    const userId = req.user.uid;
 
     await db
       .collection("users")

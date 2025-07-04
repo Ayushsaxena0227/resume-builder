@@ -2,7 +2,8 @@ const { db } = require("../firebase/config");
 
 exports.getFullResume = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
     const resumeRef = db.collection("users").doc(userId).collection("resume");
 
     const fetchCollection = async (docName) => {

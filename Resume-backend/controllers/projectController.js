@@ -2,7 +2,7 @@ const { db } = require("../firebase/config");
 
 exports.addProject = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user.uid;
     const data = req.body;
 
     const projectRef = db
@@ -22,7 +22,8 @@ exports.addProject = async (req, res) => {
 
 exports.getProjects = async (req, res) => {
   try {
-    const { userId } = req.params;
+    // const { userId } = req.params;
+    const userId = req.user.uid;
 
     const projectSnap = await db
       .collection("users")
@@ -45,7 +46,8 @@ exports.getProjects = async (req, res) => {
 
 exports.deleteProject = async (req, res) => {
   try {
-    const { userId, projectId } = req.params;
+    const { projectId } = req.params;
+    const userId = req.user.uid;
 
     await db
       .collection("users")
