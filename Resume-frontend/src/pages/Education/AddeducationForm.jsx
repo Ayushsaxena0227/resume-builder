@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { auth } from "../../Firebase/firebase";
 
 const AddEducationForm = ({ onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -18,11 +19,27 @@ const AddEducationForm = ({ onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const user = auth.currentUser;
+
+    if (!user) {
+      toast.error("You must be logged in to add education.");
+      return;
+    }
+
     try {
+      const token = await user.getIdToken();
+
       await axios.post(
-        "http://localhost:5000/api/user/ayush123/education",
-        formData
+        `http://localhost:5000/api/user/${user.uid}/education`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       setFormData({
         degree: "",
         institute: "",

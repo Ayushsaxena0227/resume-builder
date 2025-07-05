@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { auth } from "../Firebase/firebase";
 
 const SkillsLoader = ({ count = 6 }) => {
   return (
@@ -19,51 +20,94 @@ const Skills = () => {
   const [loading, setLoading] = useState(true);
   const [loaderCount, setLoaderCount] = useState(6);
 
-  const userId = "ayush123"; // hardcoded for now (make dynamic later)
-
-  const fetchSkills = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(
-        `http://localhost:5000/api/user/${userId}/skills`
-      );
-      const data = res.data || [];
-      setSkills(data);
-      setLoaderCount(data.length > 0 ? data.length : 6);
-    } catch (error) {
-      toast.error("Failed to fetch skills");
-      setLoaderCount(6);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchSkills();
+    const fetchData = async () => {
+      const user = auth.currentUser;
+
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const token = await user.getIdToken();
+        const res = await axios.get(`http://localhost:5000/api/user/skills`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = res.data || [];
+        setSkills(data);
+        setLoaderCount(data.length > 0 ? data.length : 6);
+      } catch (err) {
+        console.error("Error fetching skills:", err);
+        toast.error("Failed to load skills");
+        setSkills([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchData();
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe(); //
   }, []);
 
+  // ✅ Add new skill
   const handleAddSkill = async () => {
     if (!newSkill.trim()) return;
+
     try {
-      await axios.post(`http://localhost:5000/api/user/${userId}/skills`, {
-        name: newSkill,
-      });
+      const user = auth.currentUser;
+      const token = await user.getIdToken();
+
+      await axios.post(
+        `http://localhost:5000/api/user/skills`,
+        { name: newSkill },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       toast.success("Skill added!");
       setNewSkill("");
-      fetchSkills();
+      // Re-fetch skills after adding
+      const res = await axios.get(`http://localhost:5000/api/user/skills`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSkills(res.data || []);
     } catch (error) {
+      console.error("Add failed", error);
       toast.error("Error adding skill");
     }
   };
 
+  // ✅ Delete a skill
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:5000/api/user/${userId}/skills/${id}`
-      );
+      const user = auth.currentUser;
+      const token = await user.getIdToken();
+
+      await axios.delete(`http://localhost:5000/api/user/skills/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       toast.success("Skill deleted");
-      fetchSkills();
+      setSkills((prevSkills) => prevSkills.filter((s) => s.id !== id));
     } catch (error) {
+      console.error("Delete failed", error);
       toast.error("Error deleting skill");
     }
   };

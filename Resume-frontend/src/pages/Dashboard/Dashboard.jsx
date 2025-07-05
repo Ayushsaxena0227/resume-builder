@@ -3,8 +3,11 @@ import { useAuth } from "../../context/Authcontext";
 import SummaryCard from "./SummaryCard";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
-// Dashboard loading skeleton
+import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import { signOut } from "firebase/auth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const DashboardLoader = () => (
   <div className="p-8 bg-[#0d081f] min-h-screen text-white space-y-8 animate-pulse">
     <div className="text-center">
@@ -35,8 +38,25 @@ const DashboardLoader = () => (
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
+  console.log(currentUser);
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const auth = getAuth();
+      await signOut(auth);
+      toast.success("Logged out successfully!");
+
+      setTimeout(() => {
+        navigate("/signup");
+      }, 1500);
+    } catch (error) {
+      toast.error("Failed to logout");
+      console.error("Logout failed", error);
+    }
+  };
 
   useEffect(() => {
     const fetchResume = async () => {
@@ -89,7 +109,23 @@ const Dashboard = () => {
   return (
     <div className="p-8 bg-[#0d081f] min-h-screen text-white space-y-8">
       <h2 className="text-4xl font-bold text-center">Your Dashboard Summary</h2>
-
+      <div className="text-center">
+        {currentUser ? (
+          <button
+            onClick={handleLogout}
+            className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
+        ) : (
+          <Link
+            to="/signup"
+            className="px-6 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition"
+          >
+            Sign up
+          </Link>
+        )}
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <SummaryCard title="Personal Info">
           <p>Name: {personalInfo.fullName || "N/A"}</p>
@@ -153,7 +189,6 @@ const Dashboard = () => {
           )}
         </SummaryCard>
       </div>
-
       <div className="text-center mt-10">
         <Link to="/resume-preview">
           <button className="bg-gradient-to-r from-purple-600 to-pink-500 py-3 px-6 rounded-md text-white font-semibold hover:opacity-90 transition">

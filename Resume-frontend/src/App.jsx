@@ -15,7 +15,7 @@ import ProtectedRoute from "./pages/Auth/ProtectedRoute";
 
 const App = () => {
   const { currentUser } = useAuth();
-  console.log(currentUser);
+  // console.log(currentUser);
 
   return (
     <div className="flex bg-[#050414]">

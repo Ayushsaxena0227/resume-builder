@@ -4,6 +4,7 @@ import EducationCard from "./EducationCard";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { auth } from "../../Firebase/firebase";
 
 const EducationLoader = ({ count = 3 }) => {
   return (
@@ -28,10 +29,24 @@ export const Education = () => {
   const [loadingCount, setLoadingCount] = useState(3);
 
   const fetchEducation = async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     try {
-      setLoading(true); // Start Loading
+      setLoading(true);
+      const token = await user.getIdToken();
+
       const res = await axios.get(
-        "http://localhost:5000/api/user/ayush123/education"
+        `http://localhost:5000/api/user/${user.uid}/education`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setEducation(res.data || []);
@@ -46,10 +61,25 @@ export const Education = () => {
   };
 
   const handleDelete = async (id) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      toast.error("Unauthorized request");
+      return;
+    }
+
     try {
+      const token = await user.getIdToken();
+
       await axios.delete(
-        `http://localhost:5000/api/user/ayush123/education/${id}`
+        `http://localhost:5000/api/user/${user.uid}/education/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       toast.success("Education Deleted");
       fetchEducation();
     } catch (error) {
@@ -59,8 +89,20 @@ export const Education = () => {
   };
 
   useEffect(() => {
-    fetchEducation();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchEducation();
+      } else {
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
+
+  // useEffect(() => {
+  //   fetchEducation();
+  // }, []);
 
   return (
     <section className=" px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
