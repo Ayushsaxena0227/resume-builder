@@ -4,6 +4,7 @@ import { auth } from "../../Firebase/firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const SignupLoader = () => (
   <div className="flex justify-center items-center min-h-screen bg-[#0d081f] animate-pulse">
@@ -23,6 +24,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [hide, setHide] = useState(true);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -64,6 +66,7 @@ const Signup = () => {
       >
         <h2 className="text-2xl text-white mb-6 text-center">Create Account</h2>
 
+        {/* Email Input */}
         <input
           type="email"
           placeholder="Email"
@@ -72,13 +75,25 @@ const Signup = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full mb-4 p-3 rounded bg-[#131025] text-white border border-gray-600"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative w-full mb-4">
+          <input
+            type={hide ? "password" : "text"}
+            placeholder="Password"
+            className="w-full p-3 pr-10 rounded bg-[#131025] text-white border border-gray-600"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <div
+            className="absolute inset-y-0 right-3 flex items-center cursor-pointer"
+            onClick={() => setHide((prev) => !prev)}
+          >
+            {hide ? (
+              <AiOutlineEyeInvisible className="text-gray-400 w-5 h-5" />
+            ) : (
+              <AiOutlineEye className="text-gray-400 w-5 h-5" />
+            )}
+          </div>
+        </div>
 
         <button
           type="submit"
