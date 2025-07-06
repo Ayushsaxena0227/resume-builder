@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ExperienceCard from "./ExperienceCard";
 import AddExperienceForm from "./Addexperience";
+import { auth } from "../../Firebase/firebase";
 
-// Experience Loader Component
 const ExperienceLoader = ({ count = 3 }) => {
   return (
     <div className="mt-12 grid gap-6 sm:grid-cols-2 animate-pulse">
@@ -27,14 +27,28 @@ const Experience = () => {
   const [experience, setExperience] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loaderCount, setLoaderCount] = useState(3);
-  const userId = "ayush123"; // make dynamic later
 
   const fetchExperience = async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.warn("User not logged in.");
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
+      const token = await user.getIdToken();
       const res = await axios.get(
-        `http://localhost:5000/api/user/${userId}/experience`
+        `http://localhost:5000/api/user/${user.uid}/experience`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       const data = res.data || [];
       setExperience(data);
       setLoaderCount(data.length > 0 ? data.length : 3);
@@ -47,11 +61,26 @@ const Experience = () => {
   };
 
   const handleDelete = async (id) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.warn("Delete failed: User not logged in.");
+      return;
+    }
+
     try {
+      const token = await user.getIdToken();
+
       await axios.delete(
-        `http://localhost:5000/api/user/${userId}/experience/${id}`
+        `http://localhost:5000/api/user/${user.uid}/experience/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      fetchExperience();
+
+      fetchExperience(); // Refresh after delete
     } catch (err) {
       console.error("Error deleting experience:", err);
     }
@@ -60,7 +89,6 @@ const Experience = () => {
   useEffect(() => {
     fetchExperience();
   }, []);
-
   return (
     <section className="px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
       <div className="text-center mb-10">

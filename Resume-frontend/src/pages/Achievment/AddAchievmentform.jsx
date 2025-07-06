@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { auth } from "../../Firebase/firebase";
 
 const AddAchievementForm = ({ onAdd }) => {
-  const userId = "ayush123";
   const [formData, setFormData] = useState({
     title: "",
     type: "",
@@ -12,12 +12,35 @@ const AddAchievementForm = ({ onAdd }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.warn("User is not logged in");
+      return;
+    }
+
     try {
+      const token = await user.getIdToken();
+      const userId = user.uid;
+
       await axios.post(
         `http://localhost:5000/api/user/${userId}/achievements`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-      setFormData({ title: "", type: "", date: "", description: "" });
+
+      setFormData({
+        title: "",
+        type: "",
+        date: "",
+        description: "",
+      });
+
       onAdd();
     } catch (err) {
       console.error("Error adding achievement:", err);

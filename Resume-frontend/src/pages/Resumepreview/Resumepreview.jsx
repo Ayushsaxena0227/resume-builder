@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useReactToPrint } from "react-to-print";
+import { auth } from "../../Firebase/firebase";
 
 const ResumeLoader = () => {
   return (
@@ -45,19 +46,13 @@ const ResumeLoader = () => {
 const ResumePreview = () => {
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const userId = "ayush123";
   const componentRef = useRef();
 
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
     documentTitle: "My_Resume",
-    onBeforeGetContent: () => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, 500);
-      });
-    },
+    onBeforeGetContent: () =>
+      new Promise((resolve) => setTimeout(resolve, 500)),
     onPrintError: (error) => console.log("Print failed:", error),
   });
 
@@ -89,10 +84,27 @@ const ResumePreview = () => {
 
     const fetchResume = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/user/${userId}/resume`
+        const user = auth.currentUser;
+
+        if (!user) {
+          console.warn("No user logged in");
+          setResumeData(null);
+          return;
+        }
+
+        const token = await user.getIdToken();
+        const userId = user.uid;
+
+        const response = await axios.get(
+          `http://localhost:5000/api/user/${userId}/resume`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        setResumeData(res.data);
+
+        setResumeData(response.data);
       } catch (err) {
         console.error("Error fetching resume:", err);
       } finally {

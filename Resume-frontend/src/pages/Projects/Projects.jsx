@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ProjectCard from "./ProjectCard";
+import { auth } from "../../Firebase/firebase";
 
 const ProjectLoader = ({ count = 3 }) => {
   return (
@@ -32,17 +33,30 @@ const Projects = () => {
     link: "",
   });
 
-  const userId = "ayush123"; // TODO: Replace dynamically later
-
   const fetchProjects = async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.warn("User not logged in");
+      setLoading(false);
+      return;
+    }
+
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
+      const token = await user.getIdToken();
+
       const res = await axios.get(
-        `http://localhost:5000/api/user/${userId}/projects`
+        `http://localhost:5000/api/user/${user.uid}/projects`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       const data = res.data || [];
       setProjects(data);
-      console.log(projects);
       setLoaderCount(data.length > 0 ? data.length : 3);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -54,30 +68,61 @@ const Projects = () => {
 
   const handleAdd = async (e) => {
     e.preventDefault();
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.warn("User not logged in");
+      return;
+    }
+
     const data = {
       ...formData,
       tech: formData.tech.split(",").map((t) => t.trim()),
     };
+
     try {
+      const token = await user.getIdToken();
+
       await axios.post(
-        `http://localhost:5000/api/user/${userId}/projects`,
-        data
+        `http://localhost:5000/api/user/${user.uid}/projects`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       setFormData({ title: "", description: "", tech: "", link: "" });
-      fetchProjects(); // Refresh after adding
+      fetchProjects();
     } catch (error) {
       console.error("Error adding project:", error);
     }
   };
 
   const handleDelete = async (projectId) => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.warn("User not logged in");
+      return;
+    }
+
     try {
+      const token = await user.getIdToken();
+
       await axios.delete(
-        `http://localhost:5000/api/user/${userId}/projects/${projectId}`
+        `http://localhost:5000/api/user/${user.uid}/projects/${projectId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       fetchProjects();
     } catch (error) {
-      console.error("Error deleting:", error);
+      console.error("Error deleting project:", error);
     }
   };
 

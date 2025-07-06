@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { auth } from "../../Firebase/firebase";
 const AddExperienceForm = ({ onAdd }) => {
   const [formData, setFormData] = useState({
     role: "",
@@ -9,15 +9,25 @@ const AddExperienceForm = ({ onAdd }) => {
     endDate: "",
     description: "",
   });
-
-  const userId = "ayush123";
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) {
+      console.warn("You must be logged in to add experience.");
+      return;
+    }
+
     try {
+      const token = await user.getIdToken();
+      const userId = user.uid;
       await axios.post(
         `http://localhost:5000/api/user/${userId}/experience`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       setFormData({
         role: "",

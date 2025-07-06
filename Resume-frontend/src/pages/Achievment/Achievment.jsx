@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AddAchievementForm from "./AddAchievmentform";
 import AchievementCard from "./AchievmentCard";
+import { auth } from "../../Firebase/firebase";
 
-// Achievement Loader Component
 const AchievementLoader = ({ count = 3 }) => {
   return (
     <div className="mt-12 grid gap-6 sm:grid-cols-2 animate-pulse">
@@ -24,17 +24,32 @@ const AchievementLoader = ({ count = 3 }) => {
 };
 
 const Achievements = () => {
-  const userId = "ayush123";
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loaderCount, setLoaderCount] = useState(3);
 
   const fetchAchievements = async () => {
+    const user = auth.currentUser;
+
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
+      const token = await user.getIdToken();
+      const userId = user.uid;
+
       const res = await axios.get(
-        `http://localhost:5000/api/user/${userId}/achievements`
+        `http://localhost:5000/api/user/${userId}/achievements`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       const data = res.data || [];
       setAchievements(data);
       setLoaderCount(data.length > 0 ? data.length : 3);
@@ -47,10 +62,23 @@ const Achievements = () => {
   };
 
   const handleDelete = async (id) => {
+    const user = auth.currentUser;
+
+    if (!user) return;
+
     try {
+      const token = await user.getIdToken();
+      const userId = user.uid;
+
       await axios.delete(
-        `http://localhost:5000/api/user/${userId}/achievements/${id}`
+        `http://localhost:5000/api/user/${userId}/achievements/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       fetchAchievements();
     } catch (err) {
       console.error("Error deleting achievement:", err);
