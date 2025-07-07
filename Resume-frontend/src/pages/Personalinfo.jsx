@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { getPersonalInfo, updatePersonalInfo } from "../services/userService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getAuth } from "firebase/auth";
 import { useAuth } from "../context/Authcontext";
 // Personal Info Loader Component
 const PersonalInfoLoader = () => {

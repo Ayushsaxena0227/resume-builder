@@ -38,7 +38,7 @@ const DashboardLoader = () => (
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
-  console.log(currentUser);
+
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();

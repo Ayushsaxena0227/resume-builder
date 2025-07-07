@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 
 const Sidebar = () => {
   const links = [
+    { label: "AI Assistant", path: "/ai-keywords" },
     { label: "Dashboard", path: "/" },
     { label: "Personal Info", path: "/personal-info" },
     { label: "Skills", path: "/skills" },

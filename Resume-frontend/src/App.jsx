@@ -13,6 +13,8 @@ import Login from "./pages/Auth/Login";
 import { useAuth } from "./context/Authcontext";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute";
 
+import SmartAISuggestions from "./pages/Ai/Aikeywords";
+
 const App = () => {
   const { currentUser } = useAuth();
   // console.log(currentUser);
@@ -35,6 +37,15 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/ai-keywords"
+            element={
+              <ProtectedRoute>
+                <SmartAISuggestions />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/skills"
             element={

@@ -6,8 +6,8 @@ const {
   getPersonalInfo,
 } = require("../controllers/userController");
 
-router.post("/:userId/personal", verifyToken, setPersonalInfo);
+router.post("/personal", verifyToken, setPersonalInfo);
 
-router.get("/:userId/personal", verifyToken, getPersonalInfo);
+router.get("/personal", verifyToken, getPersonalInfo);
 
 module.exports = router;
