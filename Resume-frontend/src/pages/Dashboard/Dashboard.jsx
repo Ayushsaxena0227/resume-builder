@@ -38,7 +38,6 @@ const DashboardLoader = () => (
 
 const Dashboard = () => {
   const { currentUser } = useAuth();
-
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -72,6 +71,7 @@ const Dashboard = () => {
             },
           }
         );
+        // console.log(res.data);
         setResume(res.data);
       } catch (err) {
         console.error(
@@ -108,7 +108,10 @@ const Dashboard = () => {
 
   return (
     <div className="p-8 bg-[#0d081f] min-h-screen text-white space-y-8">
-      <h2 className="text-4xl font-bold text-center">Your Dashboard Summary</h2>
+      <h2 className="text-4xl font-bold text-center">
+        Welcome! {resume && resume.personalInfo.fullName.split(" ")[0]} <br />
+        Your Dashboard Summary
+      </h2>
       <div className="text-center">
         {currentUser ? (
           <button

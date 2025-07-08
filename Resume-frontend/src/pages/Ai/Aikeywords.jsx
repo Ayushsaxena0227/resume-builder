@@ -4,6 +4,7 @@ import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import JobDescriptionAnalyzer from "./JobdescriptionAnalyzer";
 
 const roles = [
   "Frontend Developer",
@@ -296,6 +297,9 @@ const SmartAISuggestions = () => {
             🔄 Reset AI Data
           </button>
         ) : null}
+        <div className="mt-24">
+          <JobDescriptionAnalyzer />
+        </div>
       </div>
     </section>
   );
