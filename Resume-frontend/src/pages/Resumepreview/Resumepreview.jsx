@@ -3,6 +3,7 @@ import axios from "axios";
 import { auth } from "../../Firebase/firebase";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import ShareModal from "./Sharemodal";
 
 const ResumeLoader = () => {
   return (
@@ -47,10 +48,12 @@ const ResumeLoader = () => {
 const ResumePreview = () => {
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const componentRef = useRef(null); // Ref for the element to print
+  const componentRef = useRef(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDownloadPdf = async () => {
-    console.log("Download button clicked.");
+    // console.log("Download button clicked.");
     const element = componentRef.current;
 
     if (!element) {
@@ -176,7 +179,7 @@ const ResumePreview = () => {
           `http://localhost:5000/api/user/${userId}/resume`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        console.log("Resume data fetched:", response.data);
+        // console.log("Resume data fetched:", response.data);
         setResumeData(response.data);
       } catch (err) {
         console.error("Error fetching resume:", err);
@@ -227,12 +230,19 @@ const ResumePreview = () => {
     <div className="min-h-screen bg-[#0d081f] text-white px-6 md:px-24 py-10 font-sans">
       <div className="mb-6 flex justify-end no-print">
         <button
+          className="bg-purple-600 px-4 py-2 text-white rounded-md mr-4"
+          onClick={() => setIsModalOpen(true)}
+        >
+          🔗 Share Resume for Feedback
+        </button>
+        <button
           onClick={handleDownloadPdf}
           className="bg-gradient-to-r from-purple-600 to-pink-500 py-2 px-4 rounded-md text-white font-semibold hover:opacity-90 transition"
         >
           Download as PDF
         </button>
       </div>
+      <ShareModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
 
       <div
         ref={componentRef}

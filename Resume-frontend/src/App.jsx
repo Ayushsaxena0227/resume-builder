@@ -14,6 +14,8 @@ import { useAuth } from "./context/Authcontext";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute";
 
 import SmartAISuggestions from "./pages/Ai/Aikeywords";
+import FeedbackDashboard from "./pages/Feedback/FeedbackDashboard";
+import PublicResumeView from "./pages/PublicView/PublicResumeView";
 
 const App = () => {
   const { currentUser } = useAuth();
@@ -29,6 +31,7 @@ const App = () => {
           <Route path="/" element={currentUser ? <Dashboard /> : <Login />} />
 
           {/* Protect all these routes */}
+
           <Route
             path="/personal-info"
             element={
@@ -94,6 +97,15 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/feedbacks"
+            element={
+              <ProtectedRoute>
+                <FeedbackDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/resume/shared/:userId" element={<PublicResumeView />} />
         </Routes>
       </div>
     </div>

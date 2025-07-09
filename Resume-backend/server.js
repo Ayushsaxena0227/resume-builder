@@ -10,7 +10,7 @@ const educationRoutes = require("./routes/educationRoutes");
 const experienceRoutes = require("./routes/experienceRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const resumeRoutes = require("./routes/resumeRoutes");
-// const aiRoutes = require("./routes/aiRoutes");
+const shareRoutes = require("./routes/feedbackRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -22,6 +22,7 @@ app.use("/api/user", educationRoutes);
 app.use("/api/user", experienceRoutes);
 app.use("/api/user", projectRoutes);
 app.use("/api/user", resumeRoutes);
+app.use("/api/user", shareRoutes);
 // app.use("/api/ai", aiRoutes);
 
 const PORT = process.env.PORT || 5000;

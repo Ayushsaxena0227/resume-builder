@@ -11,12 +11,13 @@ const Sidebar = () => {
     { label: "Experience", path: "/experience" },
     { label: "Achievements", path: "/achievements" },
     { label: "Resume Preview", path: "/resume-preview" },
+    { label: "Feedback Inbox", path: "/feedbacks" },
   ];
 
   return (
     <div className="h-screen w-64 bg-gradient-to-b from-slate-900 to-slate-700 text-white p-5 fixed ">
       <h2 className="text-2xl font-bold mb-8">🧾 Resume Builder</h2>
-      <nav className="space-y-2">
+      <nav className="">
         {links.map((link) => (
           <NavLink
             key={link.path}
