@@ -40,7 +40,6 @@ const SmartAISuggestions = () => {
       try {
         const user = auth.currentUser;
         if (!user) return;
-
         const token = await user.getIdToken();
         const userId = user.uid;
 
@@ -204,101 +203,108 @@ const SmartAISuggestions = () => {
   };
 
   return (
-    <section className="px-[14vw] py-44 mb-16 bg-skills-gradient text-white">
+    <section className=" py-20 bg-skills-gradient text-white min-h-screen">
       <ToastContainer />
-      <h1 className="text-3xl font-bold mb-6">🤖 Smart AI Resume Assistant</h1>
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
+        <h1 className="text-3xl font-bold mb-6 text-center mr-">
+          🤖 Smart AI Resume Assistant
+        </h1>
 
-      <div className="bg-[#0d081f] border border-purple-500 p-6 rounded-lg">
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="w-full p-3 rounded bg-gray-800 text-white border border-gray-600 mb-4"
-        >
-          <option value="">Select a Role</option>
-          {roles.map((r, idx) => (
-            <option key={idx} value={r}>
-              {r}
-            </option>
-          ))}
-        </select>
+        <div className="bg-[#0d081f] border border-purple-500 p-6 rounded-lg max-w-xl mx-auto w-full">
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="w-full p-3 rounded bg-gray-800 text-white border border-gray-600 mb-4"
+          >
+            <option value="">Select a Role</option>
+            {roles.map((r, idx) => (
+              <option key={idx} value={r}>
+                {r}
+              </option>
+            ))}
+          </select>
 
-        <button
-          onClick={runAI}
-          disabled={keywordLoading}
-          className="bg-purple-700 px-6 py-2 rounded text-white hover:opacity-90 w-full mb-4"
-        >
-          {keywordLoading ? "Generating..." : "🔍 Get AI Keyword Suggestions"}
-        </button>
+          <button
+            onClick={runAI}
+            disabled={keywordLoading}
+            className="bg-purple-700 px-6 py-2 rounded text-white hover:opacity-90 w-full mb-4"
+          >
+            {keywordLoading ? "Generating..." : "🔍 Get AI Keyword Suggestions"}
+          </button>
 
-        <button
-          onClick={generateProfessionalSummary}
-          disabled={summaryLoading}
-          className="bg-blue-600 px-6 py-2 rounded text-white hover:opacity-90 w-full"
-        >
-          {summaryLoading ? "Thinking..." : "✨ Generate Professional Summary"}
-        </button>
+          <button
+            onClick={generateProfessionalSummary}
+            disabled={summaryLoading}
+            className="bg-blue-600 px-6 py-2 rounded text-white hover:opacity-90 w-full"
+          >
+            {summaryLoading
+              ? "Thinking..."
+              : "✨ Generate Professional Summary"}
+          </button>
 
-        {keywords.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-purple-200 font-semibold">AI Keywords:</h3>
-            <ul className="list-disc list-inside text-purple-300 mt-2 space-y-1">
-              {keywords.map((k, idx) => (
-                <li key={idx}>{k}</li>
-              ))}
-            </ul>
+          {keywords.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-purple-200 font-semibold">AI Keywords:</h3>
+              <ul className="list-disc list-inside text-purple-300 mt-2 space-y-1">
+                {keywords.map((k, idx) => (
+                  <li key={idx}>{k}</li>
+                ))}
+              </ul>
 
-            <div className="flex flex-wrap gap-4 mt-4">
+              <div className="flex flex-wrap gap-4 mt-4">
+                <button
+                  onClick={copyToClipboard}
+                  className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
+                >
+                  📋 Copy Keywords
+                </button>
+                <button
+                  onClick={() => addToSection("skills")}
+                  className="bg-green-600 px-4 py-2 rounded hover:bg-green-500"
+                >
+                  ➕ Add to Skills
+                </button>
+                <button
+                  onClick={() => addToSection("summary")}
+                  className="bg-yellow-600 px-4 py-2 rounded hover:bg-yellow-500"
+                >
+                  ⚠️ Add to Summary (Legacy)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {generatedSummary && (
+            <div className="mt-10 bg-gray-800 p-5 rounded-lg border border-purple-600">
+              <h3 className="text-white text-lg font-semibold mb-2">
+                🧠 AI-Generated Professional Summary:
+              </h3>
+              <p className="text-purple-300 whitespace-pre-line">
+                {generatedSummary}
+              </p>
+
               <button
-                onClick={copyToClipboard}
-                className="bg-gray-700 px-4 py-2 rounded hover:bg-gray-600"
+                onClick={saveSummaryToBackend}
+                disabled={savingSummary}
+                className="mt-4 bg-green-600 px-5 py-2 rounded hover:bg-green-500"
               >
-                📋 Copy Keywords
-              </button>
-              <button
-                onClick={() => addToSection("skills")}
-                className="bg-green-600 px-4 py-2 rounded hover:bg-green-500"
-              >
-                ➕ Add to Skills
-              </button>
-              <button
-                onClick={() => addToSection("summary")}
-                className="bg-yellow-600 px-4 py-2 rounded hover:bg-yellow-500"
-              >
-                ⚠️ Add to Summary (Legacy)
+                {savingSummary ? "Saving..." : "💾 Save This Summary"}
               </button>
             </div>
-          </div>
-        )}
+          )}
 
-        {generatedSummary && (
-          <div className="mt-10 bg-gray-800 p-5 rounded-lg border border-purple-600">
-            <h3 className="text-white text-lg font-semibold mb-2">
-              🧠 AI-Generated Professional Summary:
-            </h3>
-            <p className="text-purple-300 whitespace-pre-line">
-              {generatedSummary}
-            </p>
-
+          {(keywords.length > 0 || generatedSummary) && (
             <button
-              onClick={saveSummaryToBackend}
-              disabled={savingSummary}
-              className="mt-4 bg-green-600 px-5 py-2 rounded hover:bg-green-500"
+              onClick={resetAI}
+              className="mt-6 bg-red-600 px-5 py-2 rounded hover:bg-red-500 w-full"
             >
-              {savingSummary ? "Saving..." : "💾 Save This Summary"}
+              🔄 Reset AI Data
             </button>
-          </div>
-        )}
+          )}
 
-        {keywords.length > 0 || generatedSummary ? (
-          <button
-            onClick={resetAI}
-            className="mt-6 bg-red-600 px-5 py-2 rounded hover:bg-red-500 w-full"
-          >
-            🔄 Reset AI Data
-          </button>
-        ) : null}
-        <div className="mt-24">
-          <JobDescriptionAnalyzer />
+          <div className="mt-24">
+            <JobDescriptionAnalyzer />
+          </div>
         </div>
       </div>
     </section>

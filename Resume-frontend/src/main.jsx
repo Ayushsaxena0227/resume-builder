@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>
-      {/* ✅ ToastContainer is global and always mounted */}
       <ToastContainer
         position="top-center"
         autoClose={2000}

@@ -1,0 +1,162 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { auth } from "../../Firebase/firebase";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+import {
+  AiOutlineEye,
+  AiOutlineCalendar,
+  AiOutlineFileText,
+} from "react-icons/ai";
+
+const ResumeAnalytics = () => {
+  const [analytics, setAnalytics] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAnalytics = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const token = await user.getIdToken();
+
+      const response = await axios.get(
+        "http://localhost:5000/api/user/analytics",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setAnalytics(response.data);
+    } catch (error) {
+      console.error("Failed to fetch analytics:", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
+
+  return (
+    <section className="min-h-screen px-[10vw] py-16 bg-[#0d081f] text-white">
+      <h1 className="text-4xl font-bold mb-10 border-b border-purple-600 pb-4">
+        📈 Resume Analytics
+      </h1>
+
+      {loading ? (
+        <p className="text-gray-300 text-lg">Loading analytics...</p>
+      ) : analytics.length === 0 ? (
+        <p className="text-gray-400 text-lg">
+          No analytics data available yet.
+        </p>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {analytics.map((item, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-[#1f1a40] to-[#1a1f2e] rounded-xl p-6 border border-purple-700 shadow-lg hover:scale-[1.02] transition"
+              >
+                <h2 className="text-2xl font-semibold text-purple-400 mb-3">
+                  Resume #{index + 1}
+                </h2>
+
+                <div className="space-y-2 text-sm">
+                  <p className="flex items-center gap-2">
+                    <AiOutlineEye className="text-blue-400" />
+                    <span>Views: </span>
+                    <span className="font-semibold text-white">
+                      {item.views || 0}
+                    </span>
+                  </p>
+
+                  <p className="flex items-center gap-2">
+                    <AiOutlineFileText className="text-green-400" />
+                    <span>Feedbacks: </span>
+                    <span className="font-semibold text-white">
+                      {item.feedbackCount || 0}
+                    </span>
+                  </p>
+
+                  <p className="flex items-center gap-2">
+                    <AiOutlineCalendar className="text-yellow-400" />
+                    <span>Last Viewed: </span>
+                    <span className="text-gray-300 italic">
+                      {item.lastViewed
+                        ? new Date(item.lastViewed).toLocaleString()
+                        : "Never"}
+                    </span>
+                  </p>
+                </div>
+
+                <a
+                  href={`/resume/shared/${item.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block text-sm text-blue-400 underline"
+                >
+                  🔗 Open Shared Resume
+                </a>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 rounded-xl bg-gray-900 p-8 shadow-inner border border-purple-800">
+            <h2 className="text-2xl font-semibold mb-6 text-white">
+              🧠 Visual Overview (Chart)
+            </h2>
+
+            <ResponsiveContainer width="100%" height={350}>
+              <BarChart data={analytics}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                <XAxis
+                  tickFormatter={(_, index) => `Resume ${index + 1}`}
+                  tick={{ fill: "#ccc" }}
+                />
+                <YAxis tick={{ fill: "#ccc" }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1a1a2e",
+                    border: "1px solid #6944ff",
+                    borderRadius: "8px",
+                    color: "#fff",
+                    fontSize: "14px",
+                  }}
+                  labelStyle={{ color: "#f2f2f2" }}
+                  itemStyle={{ color: "#f2f2f2" }}
+                  cursor={{ fill: "rgba(255, 255, 255, 0.05)" }}
+                />
+                {/* <Legend
+                  wrapperStyle={{ color: "#fff" }}
+                  formatter={(value) => (
+                    <span style={{ color: "white" }}>{value}</span>
+                  )}
+                /> */}
+                <Bar dataKey="views" fill="#8b5cf6" name="👁️ Views" />
+                <Bar
+                  dataKey="feedbackCount"
+                  fill="#34d399"
+                  name="📝 Feedbacks"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </>
+      )}
+    </section>
+  );
+};
+
+export default ResumeAnalytics;

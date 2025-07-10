@@ -9,7 +9,7 @@ import { signOut } from "firebase/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const DashboardLoader = () => (
-  <div className="p-8 bg-[#0d081f] min-h-screen text-white space-y-8 animate-pulse">
+  <div className=" min-h-screen text-white space-y-8 animate-pulse">
     <div className="text-center">
       <div className="h-10 bg-gray-600 rounded w-1/3 mx-auto"></div>
     </div>
@@ -107,7 +107,7 @@ const Dashboard = () => {
   } = resume;
 
   return (
-    <div className="p-8 bg-[#0d081f] min-h-screen text-white space-y-8">
+    <div className=" min-h-screen text-white space-y-8">
       <h2 className="text-4xl font-bold text-center">
         Welcome! {resume && resume.personalInfo.fullName.split(" ")[0]} <br />
         Your Dashboard Summary

@@ -39,7 +39,7 @@ const FeedbackDashboard = () => {
   }, []);
 
   return (
-    <div className="px-[10vw] py-10">
+    <div className="px-[6vw] lg:px-[10vw] py-10">
       <h1 className="text-2xl font-bold text-white mb-6">
         📥 Feedback Dashboard
       </h1>
@@ -49,7 +49,7 @@ const FeedbackDashboard = () => {
       ) : feedbackList.length === 0 ? (
         <p className="text-gray-400">No feedback submitted yet.</p>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-6 mr-6">
           {feedbackList.map((item) => (
             <FeedbackCard key={item.id} feedback={item} />
           ))}

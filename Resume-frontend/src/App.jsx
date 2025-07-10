@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import PersonalInfo from "./pages/Personalinfo";
 import Skills from "./pages/skills";
@@ -12,25 +12,22 @@ import Signup from "./pages/Auth/Signup";
 import Login from "./pages/Auth/Login";
 import { useAuth } from "./context/Authcontext";
 import ProtectedRoute from "./pages/Auth/ProtectedRoute";
-
 import SmartAISuggestions from "./pages/Ai/Aikeywords";
 import FeedbackDashboard from "./pages/Feedback/FeedbackDashboard";
 import PublicResumeView from "./pages/PublicView/PublicResumeView";
+import ResumeAnalytics from "./pages/Analytics/ResumeAnalytics";
 
 const App = () => {
   const { currentUser } = useAuth();
-  // console.log(currentUser);
 
   return (
-    <div className="flex bg-[#050414]">
+    <div className="flex bg-[#050414] min-h-screen">
       {currentUser && <Sidebar />}
-      <div className={`${currentUser ? "ml-64" : ""} p-8 w-full`}>
+      <div className={`${currentUser ? "" : ""} p-4 sm:p-6 md:p-8 w-full`}>
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/" element={currentUser ? <Dashboard /> : <Login />} />
-
-          {/* Protect all these routes */}
 
           <Route
             path="/personal-info"
@@ -48,7 +45,6 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/skills"
             element={
@@ -106,9 +102,11 @@ const App = () => {
             }
           />
           <Route path="/resume/shared/:userId" element={<PublicResumeView />} />
+          <Route path="/analytics" element={<ResumeAnalytics />} />
         </Routes>
       </div>
     </div>
   );
 };
+
 export default App;
