@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/Authcontext";
 import SummaryCard from "./SummaryCard";
 import axios from "axios";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { getAuth } from "firebase/auth";
-import { signOut } from "firebase/auth";
-import { ToastContainer, toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ResumeScorer from "../Ai/ResumeScorer";
+
 const DashboardLoader = () => (
-  <div className=" min-h-screen text-white space-y-8 animate-pulse">
+  <div className="min-h-screen text-white space-y-8 animate-pulse">
     <div className="text-center">
       <div className="h-10 bg-gray-600 rounded w-1/3 mx-auto"></div>
     </div>
@@ -71,7 +71,6 @@ const Dashboard = () => {
             },
           }
         );
-        // console.log(res.data);
         setResume(res.data);
       } catch (err) {
         console.error(
@@ -96,7 +95,6 @@ const Dashboard = () => {
     );
   }
 
-  // Defensive fallback for missing data
   const {
     personalInfo = {},
     education = [],
@@ -107,28 +105,37 @@ const Dashboard = () => {
   } = resume;
 
   return (
-    <div className=" min-h-screen text-white space-y-8">
+    <div className="min-h-screen text-white space-y-8 px-4 sm:px-8 lg:px-16 py-10">
+      <ToastContainer />
+
       <h2 className="text-4xl font-bold text-center">
-        Welcome! {resume && resume.personalInfo.fullName.split(" ")[0]} <br />
+        Welcome! {personalInfo.fullName?.split(" ")[0]} <br />
         Your Dashboard Summary
       </h2>
+
       <div className="text-center">
         {currentUser ? (
-          <button
-            onClick={handleLogout}
-            className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
-          >
-            Logout
-          </button>
+          <div className="flex justify-center gap-4 items-center flex-wrap mt-4">
+            <ResumeScorer />
+
+            <button
+              onClick={handleLogout}
+              className="px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
+          </div>
         ) : (
           <Link
             to="/signup"
-            className="px-6 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition"
+            className="px-6 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600 transition mt-4 inline-block"
           >
             Sign up
           </Link>
         )}
       </div>
+
+      {/* 👉 Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <SummaryCard title="Personal Info">
           <p>Name: {personalInfo.fullName || "N/A"}</p>
@@ -150,8 +157,8 @@ const Dashboard = () => {
         <SummaryCard title="Skills">
           {skills.length > 0 ? (
             <ul className="list-disc ml-4">
-              {skills.slice(0, 5).map((skill) => (
-                <li key={skill.id}>{skill.name}</li>
+              {skills.slice(0, 5).map((skill, i) => (
+                <li key={i}>{skill.name}</li>
               ))}
             </ul>
           ) : (
@@ -192,6 +199,11 @@ const Dashboard = () => {
           )}
         </SummaryCard>
       </div>
+
+      {/* 👇 DIRECTLY render ResumeScorer always below */}
+      <div className="mt-10"></div>
+
+      {/* 📄 Resume Preview CTA */}
       <div className="text-center mt-10">
         <Link to="/resume-preview">
           <button className="bg-gradient-to-r from-purple-600 to-pink-500 py-3 px-6 rounded-md text-white font-semibold hover:opacity-90 transition">

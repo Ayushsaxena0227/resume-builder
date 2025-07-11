@@ -9,13 +9,44 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 import {
   AiOutlineEye,
   AiOutlineCalendar,
   AiOutlineFileText,
 } from "react-icons/ai";
+
+// Resume Analytics Loader (Skeleton)
+const ResumeAnalyticsLoader = () => (
+  <div className="text-white space-y-12 animate-pulse">
+    {/* Title Placeholder */}
+    <div className="h-10 bg-gray-700 w-1/3 rounded mx-auto"></div>
+
+    {/* Cards Placeholder */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      {[...Array(3)].map((_, index) => (
+        <div
+          key={index}
+          className="bg-gradient-to-br from-[#1f1a40] to-[#1a1f2e] rounded-xl p-6 border border-purple-700 shadow-lg"
+        >
+          <div className="h-6 bg-gray-600 w-1/2 rounded mb-6"></div>
+          <div className="space-y-3 text-sm">
+            <div className="h-4 bg-gray-700 w-3/4 rounded"></div>
+            <div className="h-4 bg-gray-700 w-2/3 rounded"></div>
+            <div className="h-4 bg-gray-700 w-1/2 rounded"></div>
+          </div>
+          <div className="h-4 bg-blue-700 rounded w-3/4 mt-6"></div>
+        </div>
+      ))}
+    </div>
+
+    {/* Chart Placeholder */}
+    <div className="mt-16 rounded-xl bg-gray-900 p-8 border border-purple-800 shadow-inner">
+      <div className="h-6 bg-gray-600 w-1/4 rounded mb-6"></div>
+      <div className="h-64 bg-gray-800 rounded"></div>
+    </div>
+  </div>
+);
 
 const ResumeAnalytics = () => {
   const [analytics, setAnalytics] = useState([]);
@@ -56,13 +87,14 @@ const ResumeAnalytics = () => {
       </h1>
 
       {loading ? (
-        <p className="text-gray-300 text-lg">Loading analytics...</p>
+        <ResumeAnalyticsLoader />
       ) : analytics.length === 0 ? (
         <p className="text-gray-400 text-lg">
           No analytics data available yet.
         </p>
       ) : (
         <>
+          {/* Resume Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {analytics.map((item, index) => (
               <div
@@ -113,6 +145,7 @@ const ResumeAnalytics = () => {
             ))}
           </div>
 
+          {/* Chart Section */}
           <div className="mt-16 rounded-xl bg-gray-900 p-8 shadow-inner border border-purple-800">
             <h2 className="text-2xl font-semibold mb-6 text-white">
               🧠 Visual Overview (Chart)
@@ -138,12 +171,6 @@ const ResumeAnalytics = () => {
                   itemStyle={{ color: "#f2f2f2" }}
                   cursor={{ fill: "rgba(255, 255, 255, 0.05)" }}
                 />
-                {/* <Legend
-                  wrapperStyle={{ color: "#fff" }}
-                  formatter={(value) => (
-                    <span style={{ color: "white" }}>{value}</span>
-                  )}
-                /> */}
                 <Bar dataKey="views" fill="#8b5cf6" name="👁️ Views" />
                 <Bar
                   dataKey="feedbackCount"

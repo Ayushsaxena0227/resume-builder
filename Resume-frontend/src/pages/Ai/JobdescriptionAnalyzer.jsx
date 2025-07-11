@@ -3,6 +3,7 @@ import { firebaseApp, auth } from "../../Firebase/firebase";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "firebase/ai";
 import axios from "axios";
 import { toast } from "react-toastify";
+import ResumeScorer from "./ResumeScorer";
 
 const JobDescriptionAnalyzer = () => {
   const [jobDesc, setJobDesc] = useState("");
