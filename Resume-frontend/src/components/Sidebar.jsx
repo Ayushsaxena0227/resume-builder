@@ -15,6 +15,7 @@ const Sidebar = () => {
     { label: "Experience", path: "/experience" },
     { label: "Achievements", path: "/achievements" },
     { label: "Resume Preview", path: "/resume-preview" },
+    { label: "Resume History", path: "/resume-history" },
     { label: "Resume Analytics", path: "/analytics" },
     { label: "Feedback Inbox", path: "/feedbacks" },
   ];

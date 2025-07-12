@@ -113,9 +113,10 @@ const SmartAISuggestions = () => {
       const newSummary = result.response.text().trim();
 
       setGeneratedSummary(newSummary);
+      toast.success("summary generated successfully");
       localStorage.setItem("ai_summary", newSummary);
     } catch (err) {
-      toast.error("Summary generation failed ❌");
+      toast.error("Summary generation failed ");
       console.error(err);
     } finally {
       setSummaryLoading(false);
@@ -205,6 +206,36 @@ const SmartAISuggestions = () => {
   return (
     <section className=" py-20 bg-skills-gradient text-white min-h-screen">
       <ToastContainer />
+      {(keywordLoading || summaryLoading) && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center pl-12 sm:pl-0 items-center">
+          <div className="flex items-center gap-3 bg-[#1f1a40] px-6 py-4 rounded-lg border border-purple-700 shadow-lg">
+            <svg
+              className="animate-spin h-6 w-6 text-purple-300"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+              ></path>
+            </svg>
+            <span className="text-white font-medium whitespace-nowrap">
+              AI is generating content...
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
         <h1 className="text-3xl font-bold mb-6 text-center mr-">
           🤖 Smart AI Resume Assistant

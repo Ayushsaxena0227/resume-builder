@@ -95,20 +95,18 @@ const ResumeScorer = () => {
 
   return (
     <div className="inline-block">
-      {/* Button with same styling as logout button */}
       <button
         onClick={runScoring}
         disabled={loading}
         className="px-6 py-2 bg-purple-600 text-white font-semibold rounded-md hover:bg-purple-700 transition"
       >
-        {loading ? "Scoring..." : "🎯 My AI Resume Score"}
+        {loading ? "Scoring..." : " My Resume Score"}
       </button>
 
-      {/* Score display section - only show when there's score data */}
       {scoreData && (
         <div className="mt-6 p-6 bg-gray-900 rounded-lg text-white border border-purple-800 transition-all">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold">📊 AI Resume Score</h3>
+            <h3 className="text-xl font-bold">My Resume Score</h3>
             <button
               onClick={handleReset}
               className="text-sm text-red-400 hover:text-red-300 underline"

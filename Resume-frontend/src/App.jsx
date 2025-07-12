@@ -16,6 +16,7 @@ import SmartAISuggestions from "./pages/Ai/Aikeywords";
 import FeedbackDashboard from "./pages/Feedback/FeedbackDashboard";
 import PublicResumeView from "./pages/PublicView/PublicResumeView";
 import ResumeAnalytics from "./pages/Analytics/ResumeAnalytics";
+import ResumeHistory from "./pages/ResumeVersions/ResumeHistory";
 
 const App = () => {
   const { currentUser } = useAuth();
@@ -90,6 +91,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <ResumePreview />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume-history"
+            element={
+              <ProtectedRoute>
+                <ResumeHistory />
               </ProtectedRoute>
             }
           />

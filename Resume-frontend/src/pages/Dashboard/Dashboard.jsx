@@ -135,7 +135,6 @@ const Dashboard = () => {
         )}
       </div>
 
-      {/* 👉 Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <SummaryCard title="Personal Info">
           <p>Name: {personalInfo.fullName || "N/A"}</p>
@@ -200,7 +199,6 @@ const Dashboard = () => {
         </SummaryCard>
       </div>
 
-      {/* 👇 DIRECTLY render ResumeScorer always below */}
       <div className="mt-10"></div>
 
       {/* 📄 Resume Preview CTA */}

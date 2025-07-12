@@ -10,6 +10,7 @@ const experienceRoutes = require("./routes/experienceRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const resumeRoutes = require("./routes/resumeRoutes");
 const shareRoutes = require("./routes/feedbackRoutes");
+const versionRoutes = require("./routes/versionRoutes");
 
 app.use(cors());
 app.use(express.json());
@@ -22,7 +23,7 @@ app.use("/api/user", experienceRoutes);
 app.use("/api/user", projectRoutes);
 app.use("/api/user", resumeRoutes);
 app.use("/api/user", shareRoutes);
-// app.use("/api/ai", aiRoutes);
+app.use("/api/user", versionRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
