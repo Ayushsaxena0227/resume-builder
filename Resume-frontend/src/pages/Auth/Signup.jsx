@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { signInAnonymously } from "firebase/auth";
 
 const SignupLoader = () => (
   <div className="flex justify-center items-center min-h-screen bg-[#0d081f] animate-pulse">
@@ -46,16 +47,32 @@ const Signup = () => {
         },
       })
       .then(() => {
+        setLoading(false);
+        navigate("/");
+      })
+      .catch((err) => {
+        console.error("Error", err);
+        setLoading(false);
+      });
+  };
+  const handleGuestSignIn = async () => {
+    setLoading(true);
+    toast
+      .promise(signInAnonymously(auth), {
+        pending: "Signing you in as Guest...",
+        success: "Welcome, Guest!",
+        error: "Guest sign-in failed.",
+      })
+      .then(() => {
         setTimeout(() => {
           navigate("/");
         }, 1500);
       })
       .catch((err) => {
-        console.error("Signup error:", err);
+        console.error("Guest sign-in error:", err);
         setLoading(false);
       });
   };
-
   return loading ? (
     <SignupLoader />
   ) : (
@@ -100,6 +117,13 @@ const Signup = () => {
           className="w-full py-3 bg-purple-600 text-white rounded hover:opacity-90 transition"
         >
           Sign Up
+        </button>
+        <button
+          type="button"
+          className="w-full py-3 mt-3 bg-gray-700 text-white rounded hover:opacity-90 transition"
+          onClick={handleGuestSignIn}
+        >
+          Continue as Guest
         </button>
 
         <p className="mt-4 text-sm text-gray-400 text-center">

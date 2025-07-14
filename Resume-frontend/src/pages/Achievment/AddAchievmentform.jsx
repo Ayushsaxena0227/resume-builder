@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { auth } from "../../Firebase/firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AddAchievementForm = ({ onAdd }) => {
   const [formData, setFormData] = useState({
@@ -40,9 +42,10 @@ const AddAchievementForm = ({ onAdd }) => {
         date: "",
         description: "",
       });
-
+      toast.success("achievement added");
       onAdd();
     } catch (err) {
+      toast.error("failed to add");
       console.error("Error adding achievement:", err);
     }
   };
@@ -52,6 +55,7 @@ const AddAchievementForm = ({ onAdd }) => {
       onSubmit={handleSubmit}
       className="bg-[#0d081f] p-6 rounded-lg border border-gray-700 max-w-2xl mx-auto space-y-4 shadow-md"
     >
+      <ToastContainer />
       <input
         type="text"
         placeholder="Title"

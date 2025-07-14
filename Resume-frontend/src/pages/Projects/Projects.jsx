@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import ProjectCard from "./ProjectCard";
 import { auth } from "../../Firebase/firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProjectLoader = ({ count = 3 }) => {
   return (
@@ -92,10 +94,11 @@ const Projects = () => {
           },
         }
       );
-
+      toast.success("Project addded");
       setFormData({ title: "", description: "", tech: "", link: "" });
       fetchProjects();
     } catch (error) {
+      toast.error("Failed to add project");
       console.error("Error adding project:", error);
     }
   };
@@ -119,9 +122,10 @@ const Projects = () => {
           },
         }
       );
-
+      toast.success("project deleted");
       fetchProjects();
     } catch (error) {
+      toast.error("failed to delete");
       console.error("Error deleting project:", error);
     }
   };
@@ -132,6 +136,7 @@ const Projects = () => {
 
   return (
     <section className=" px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
+      <ToastContainer />
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold">PROJECTS</h2>
         <div className="w-32 h-1 bg-purple-500 mx-auto mt-4"></div>

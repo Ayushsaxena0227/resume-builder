@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { auth } from "../../Firebase/firebase";
+import { toast } from "react-toastify";
 
 const VersionCard = ({ version, onRestore, index }) => {
   const [restoring, setRestoring] = useState(false);
@@ -16,11 +17,13 @@ const VersionCard = ({ version, onRestore, index }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      alert(`✅ ${version.versionName || "Resume"} restored successfully!`);
+      toast.success(
+        ` ${version.versionName || "Resume"} restored successfully!`
+      );
       if (onRestore) onRestore();
     } catch (err) {
       console.error("Error restoring version:", err);
-      alert("❌ Failed to restore version");
+      toast.error(" Failed to restore version");
     } finally {
       setRestoring(false);
     }

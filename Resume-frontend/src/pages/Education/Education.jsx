@@ -106,9 +106,8 @@ export const Education = () => {
 
   return (
     <section className=" px-[12vw] md:px-[7vw] lg:px-[16vw] bg-skills-gradient clip-path-custom-3 text-white">
-      <ToastContainer />
-
       <div className="text-center mb-12">
+        <ToastContainer />
         <h2 className="text-4xl font-bold">EDUCATION</h2>
         <div className="w-32 h-1 bg-purple-500 mx-auto mt-4"></div>
         <p className="text-gray-400 mt-4 text-lg font-medium">

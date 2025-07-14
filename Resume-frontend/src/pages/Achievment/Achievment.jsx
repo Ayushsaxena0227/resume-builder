@@ -3,6 +3,8 @@ import axios from "axios";
 import AddAchievementForm from "./AddAchievmentform";
 import AchievementCard from "./AchievmentCard";
 import { auth } from "../../Firebase/firebase";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AchievementLoader = ({ count = 3 }) => {
   return (
@@ -78,9 +80,10 @@ const Achievements = () => {
           },
         }
       );
-
+      toast.success("achievement deleted");
       fetchAchievements();
     } catch (err) {
+      toast.error("failed to delete");
       console.error("Error deleting achievement:", err);
     }
   };

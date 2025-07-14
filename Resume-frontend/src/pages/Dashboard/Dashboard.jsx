@@ -46,11 +46,14 @@ const Dashboard = () => {
     try {
       const auth = getAuth();
       await signOut(auth);
+
+      
       toast.success("Logged out successfully!");
 
+     
       setTimeout(() => {
         navigate("/signup");
-      }, 1500);
+      }, 1000);
     } catch (error) {
       toast.error("Failed to logout");
       console.error("Logout failed", error);

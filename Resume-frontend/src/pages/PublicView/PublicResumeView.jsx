@@ -3,6 +3,31 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import FeedbackForm from "./FeedbackForm";
 
+// ✅ Skeleton loader for public resume preview
+const ResumeSkeletonLoader = () => {
+  return (
+    <div className="min-h-screen bg-gray-900 text-white px-6 py-12 font-sans animate-pulse">
+      <div className="bg-gray-800 p-6 rounded-lg shadow mb-10">
+        <div className="h-6 bg-gray-600 rounded w-1/3 mb-2"></div>
+        <div className="h-4 bg-gray-700 rounded w-1/4 mb-1"></div>
+        <div className="h-4 bg-gray-700 rounded w-1/4 mb-1"></div>
+        <div className="h-4 bg-gray-800 rounded w-1/2 mb-1"></div>
+      </div>
+
+      {[...Array(3)].map((_, index) => (
+        <div key={index} className="mb-10">
+          <div className="h-6 bg-purple-700 w-2/5 mb-4 rounded"></div>
+          <div className="space-y-4">
+            <div className="h-4 bg-gray-700 w-3/4 rounded"></div>
+            <div className="h-4 bg-gray-800 w-2/4 rounded"></div>
+            <div className="h-4 bg-gray-700 w-full rounded"></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const PublicResumeView = () => {
   const { userId } = useParams();
   const [resumeData, setResumeData] = useState(null);
@@ -25,7 +50,8 @@ const PublicResumeView = () => {
     fetchResume();
   }, [userId]);
 
-  if (loading) return <div className="text-white p-10">Loading resume...</div>;
+  // ✅ Use fancy dynamic loader instead of plain text
+  if (loading) return <ResumeSkeletonLoader />;
 
   if (!resumeData)
     return <div className="text-red-400 p-10">Resume not found.</div>;
