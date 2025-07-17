@@ -29,6 +29,7 @@ const Achievements = () => {
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loaderCount, setLoaderCount] = useState(3);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const fetchAchievements = async () => {
     const user = auth.currentUser;
@@ -44,7 +45,7 @@ const Achievements = () => {
       const userId = user.uid;
 
       const res = await axios.get(
-        `http://localhost:5000/api/user/${userId}/achievements`,
+        `${baseURL}/api/user/${userId}/achievements`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -72,14 +73,11 @@ const Achievements = () => {
       const token = await user.getIdToken();
       const userId = user.uid;
 
-      await axios.delete(
-        `http://localhost:5000/api/user/${userId}/achievements/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${baseURL}/${userId}/achievements/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       toast.success("achievement deleted");
       fetchAchievements();
     } catch (err) {

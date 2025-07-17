@@ -12,6 +12,7 @@ const AddEducationForm = ({ onSuccess }) => {
     endYear: "",
     score: "",
   });
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,15 +31,11 @@ const AddEducationForm = ({ onSuccess }) => {
     try {
       const token = await user.getIdToken();
 
-      await axios.post(
-        `http://localhost:5000/api/user/${user.uid}/education`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${baseURL}/api/user/${user.uid}/education`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setFormData({
         degree: "",

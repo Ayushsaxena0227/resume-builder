@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const API = "http://localhost:5000/api/user";
+const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
 export const getPersonalInfo = async (userId, token) => {
-  const res = await axios.get(`${API}/personal`, {
+  const res = await axios.get(`${baseURL}/personal`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -12,7 +12,7 @@ export const getPersonalInfo = async (userId, token) => {
 };
 
 export const updatePersonalInfo = async (userId, data, token) => {
-  const res = await axios.post(`${API}/personal`, data, {
+  const res = await axios.post(`${baseURL}/personal`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

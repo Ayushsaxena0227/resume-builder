@@ -11,6 +11,7 @@ const AddAchievementForm = ({ onAdd }) => {
     date: "",
     description: "",
   });
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,15 +27,11 @@ const AddAchievementForm = ({ onAdd }) => {
       const token = await user.getIdToken();
       const userId = user.uid;
 
-      await axios.post(
-        `http://localhost:5000/api/user/${userId}/achievements`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${baseURL}/api/user/${userId}/achievements`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setFormData({
         title: "",

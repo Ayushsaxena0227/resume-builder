@@ -34,6 +34,7 @@ const Projects = () => {
     tech: "",
     link: "",
   });
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const fetchProjects = async () => {
     const user = auth.currentUser;
@@ -48,14 +49,11 @@ const Projects = () => {
       setLoading(true);
       const token = await user.getIdToken();
 
-      const res = await axios.get(
-        `http://localhost:5000/api/user/${user.uid}/projects`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${baseURL}/api/user/${user.uid}/projects`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const data = res.data || [];
       setProjects(data);
@@ -85,15 +83,11 @@ const Projects = () => {
     try {
       const token = await user.getIdToken();
 
-      await axios.post(
-        `http://localhost:5000/api/user/${user.uid}/projects`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${baseURL}/api/user/${user.uid}/projects`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       toast.success("Project addded");
       setFormData({ title: "", description: "", tech: "", link: "" });
       fetchProjects();
@@ -115,7 +109,7 @@ const Projects = () => {
       const token = await user.getIdToken();
 
       await axios.delete(
-        `http://localhost:5000/api/user/${user.uid}/projects/${projectId}`,
+        `${baseURL}/api/user/${user.uid}/projects/${projectId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

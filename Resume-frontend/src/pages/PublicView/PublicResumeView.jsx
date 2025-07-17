@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import FeedbackForm from "./FeedbackForm";
 
-// ✅ Skeleton loader for public resume preview
 const ResumeSkeletonLoader = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white px-6 py-12 font-sans animate-pulse">
@@ -32,12 +31,13 @@ const PublicResumeView = () => {
   const { userId } = useParams();
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchResume = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/user/resume/shared/${userId}`
+          `${baseURL}/api/user/resume/shared/${userId}`
         );
         setResumeData(response.data);
       } catch (error) {
@@ -50,7 +50,6 @@ const PublicResumeView = () => {
     fetchResume();
   }, [userId]);
 
-  // ✅ Use fancy dynamic loader instead of plain text
   if (loading) return <ResumeSkeletonLoader />;
 
   if (!resumeData)

@@ -49,9 +49,8 @@ const ResumePreview = () => {
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(true);
   const componentRef = useRef(null);
-
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleDownloadPdf = async () => {
     // console.log("Download button clicked.");
     const element = componentRef.current;
@@ -176,7 +175,7 @@ const ResumePreview = () => {
         const token = await user.getIdToken();
         const userId = user.uid;
         const response = await axios.get(
-          `http://localhost:5000/api/user/${userId}/resume`,
+          `${baseURL}/api/user/${userId}/resume`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         // console.log("Resume data fetched:", response.data);

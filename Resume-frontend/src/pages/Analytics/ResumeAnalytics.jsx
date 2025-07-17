@@ -51,6 +51,7 @@ const ResumeAnalyticsLoader = () => (
 const ResumeAnalytics = () => {
   const [analytics, setAnalytics] = useState([]);
   const [loading, setLoading] = useState(true);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const fetchAnalytics = async () => {
     try {
@@ -59,14 +60,11 @@ const ResumeAnalytics = () => {
 
       const token = await user.getIdToken();
 
-      const response = await axios.get(
-        "http://localhost:5000/api/user/analytics",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${baseURL}/api/user/analytics`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setAnalytics(response.data);
     } catch (error) {

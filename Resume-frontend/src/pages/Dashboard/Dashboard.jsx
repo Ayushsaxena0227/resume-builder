@@ -41,16 +41,15 @@ const Dashboard = () => {
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const handleLogout = async () => {
     try {
       const auth = getAuth();
       await signOut(auth);
 
-      
       toast.success("Logged out successfully!");
 
-     
       setTimeout(() => {
         navigate("/signup");
       }, 1000);
@@ -67,7 +66,7 @@ const Dashboard = () => {
       try {
         const token = await currentUser.getIdToken();
         const res = await axios.get(
-          `http://localhost:5000/api/user/${currentUser.uid}/resume`,
+          `${baseURL}/api/user/${currentUser.uid}/resume`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -204,7 +203,6 @@ const Dashboard = () => {
 
       <div className="mt-10"></div>
 
-      {/* 📄 Resume Preview CTA */}
       <div className="text-center mt-10">
         <Link to="/resume-preview">
           <button className="bg-gradient-to-r from-purple-600 to-pink-500 py-3 px-6 rounded-md text-white font-semibold hover:opacity-90 transition">

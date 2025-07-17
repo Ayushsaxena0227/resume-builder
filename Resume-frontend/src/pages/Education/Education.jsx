@@ -27,6 +27,7 @@ export const Education = () => {
   const [education, setEducation] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingCount, setLoadingCount] = useState(3);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const fetchEducation = async () => {
     const user = auth.currentUser;
@@ -40,14 +41,11 @@ export const Education = () => {
       setLoading(true);
       const token = await user.getIdToken();
 
-      const res = await axios.get(
-        `http://localhost:5000/api/user/${user.uid}/education`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${baseURL}/api/user/${user.uid}/education`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setEducation(res.data || []);
       setLoadingCount(res.data?.length > 0 ? res.data.length : 3);
@@ -71,14 +69,11 @@ export const Education = () => {
     try {
       const token = await user.getIdToken();
 
-      await axios.delete(
-        `http://localhost:5000/api/user/${user.uid}/education/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${baseURL}/api/user/${user.uid}/education/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       toast.success("Education Deleted");
       fetchEducation();

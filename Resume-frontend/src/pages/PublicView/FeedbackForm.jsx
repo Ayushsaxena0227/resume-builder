@@ -8,6 +8,7 @@ const FeedbackForm = ({ userId }) => {
     email: "",
     message: "",
   });
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const handleInput = (e) => {
     setFeedback({ ...feedback, [e.target.name]: e.target.value });
@@ -17,7 +18,7 @@ const FeedbackForm = ({ userId }) => {
     e.preventDefault();
     try {
       await axios.post(
-        `http://localhost:5000/api/user/resume/feedback/${userId}`,
+        `${baseURL}/api/user/resume/feedback/${userId}`,
         feedback
       );
       setSubmitted(true);
@@ -33,7 +34,7 @@ const FeedbackForm = ({ userId }) => {
         📩 Leave Feedback
       </h2>
       {submitted && (
-        <p className="text-green-400 mb-4">✅ Thanks for your feedback!</p>
+        <p className="text-green-400 mb-4"> Thanks for your feedback!</p>
       )}
 
       <input

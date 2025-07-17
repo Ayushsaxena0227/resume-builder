@@ -27,7 +27,7 @@ const ResumeHistory = () => {
   const [versions, setVersions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const baseURL = import.meta.env.VITE_URL;
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const fetchVersions = async () => {
     try {

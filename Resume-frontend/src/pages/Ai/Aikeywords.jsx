@@ -25,6 +25,7 @@ const SmartAISuggestions = () => {
   const [keywordLoading, setKeywordLoading] = useState(false);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [savingSummary, setSavingSummary] = useState(false);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const savedKeywords = localStorage.getItem("ai_keywords");
@@ -44,7 +45,7 @@ const SmartAISuggestions = () => {
         const userId = user.uid;
 
         const response = await axios.get(
-          `http://localhost:5000/api/user/${userId}/resume`,
+          `${baseURL}/api/user/${userId}/resume`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -130,7 +131,7 @@ const SmartAISuggestions = () => {
       const token = await auth.currentUser.getIdToken();
 
       await axios.post(
-        `http://localhost:5000/api/user/personal`,
+        `${baseURL}/api/user/personal`,
         {
           ...resume?.personalInfo,
           summary: generatedSummary,
@@ -172,7 +173,7 @@ const SmartAISuggestions = () => {
         await Promise.all(
           keywords.map((kw) =>
             axios.post(
-              `http://localhost:5000${endpoint}`,
+              `${baseURL}${endpoint}`,
               { name: kw },
               { headers: { Authorization: `Bearer ${token}` } }
             )
@@ -182,7 +183,7 @@ const SmartAISuggestions = () => {
         const summary = resume?.personalInfo?.summary || "";
         const newSummary = `${summary} ${keywords.join(", ")}`;
         await axios.post(
-          `http://localhost:5000${endpoint}`,
+          `${baseURL}${endpoint}`,
           { ...resume.personalInfo, summary: newSummary },
           { headers: { Authorization: `Bearer ${token}` } }
         );

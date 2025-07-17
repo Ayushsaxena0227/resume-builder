@@ -5,13 +5,14 @@ import { toast } from "react-toastify";
 
 const VersionCard = ({ version, onRestore, index }) => {
   const [restoring, setRestoring] = useState(false);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const handleRestore = async () => {
     try {
       setRestoring(true);
       const token = await auth.currentUser.getIdToken();
       await axios.post(
-        `http://localhost:5000/api/user/resume/restore/${version.id}`,
+        `${baseURL}/api/user/resume/restore/${version.id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

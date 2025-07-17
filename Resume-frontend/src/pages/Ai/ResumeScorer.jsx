@@ -9,6 +9,7 @@ const ResumeScorer = () => {
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(false);
   const [scoreData, setScoreData] = useState(null);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const savedScore = localStorage.getItem("ai_resume_score");
@@ -27,10 +28,9 @@ const ResumeScorer = () => {
     try {
       const user = auth.currentUser;
       const token = await user.getIdToken();
-      const res = await axios.get(
-        `http://localhost:5000/api/user/${user.uid}/resume`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await axios.get(`${baseURL}/api/user/${user.uid}/resume`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setResume(res.data);
     } catch (err) {
       console.error("Failed to fetch resume:", err);
@@ -86,7 +86,6 @@ const ResumeScorer = () => {
     }
   };
 
-  // 🔁 Reset/clear the local data
   const handleReset = () => {
     setScoreData(null);
     localStorage.removeItem("ai_resume_score");

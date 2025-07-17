@@ -9,6 +9,7 @@ const JobDescriptionAnalyzer = () => {
   const [jobDesc, setJobDesc] = useState("");
   const [analysis, setAnalysis] = useState("");
   const [loading, setLoading] = useState(false);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const savedDesc = localStorage.getItem("jd_desc");
@@ -35,14 +36,11 @@ const JobDescriptionAnalyzer = () => {
       const token = await user.getIdToken();
       const userId = user.uid;
 
-      const res = await axios.get(
-        `http://localhost:5000/api/user/${userId}/resume`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axios.get(`${baseURL}/api/user/${userId}/resume`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const resume = res.data;
 

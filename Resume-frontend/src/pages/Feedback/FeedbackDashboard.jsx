@@ -30,6 +30,7 @@ const FeedbackDashboardLoader = ({ count = 4 }) => (
 const FeedbackDashboard = () => {
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchFeedback = async () => {
@@ -42,14 +43,11 @@ const FeedbackDashboard = () => {
       try {
         const token = await user.getIdToken();
 
-        const res = await axios.get(
-          `http://localhost:5000/api/user/resume/feedbacks/`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axios.get(`${baseURL}/user/resume/feedbacks/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         setFeedbackList(res.data);
       } catch (err) {

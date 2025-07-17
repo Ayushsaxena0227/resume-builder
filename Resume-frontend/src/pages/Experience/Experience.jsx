@@ -27,6 +27,7 @@ const Experience = () => {
   const [experience, setExperience] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loaderCount, setLoaderCount] = useState(3);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   const fetchExperience = async () => {
     const user = auth.currentUser;
@@ -41,7 +42,7 @@ const Experience = () => {
       setLoading(true);
       const token = await user.getIdToken();
       const res = await axios.get(
-        `http://localhost:5000/api/user/${user.uid}/experience`,
+        `${baseURL}/api/user/${user.uid}/experience`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -71,14 +72,11 @@ const Experience = () => {
     try {
       const token = await user.getIdToken();
 
-      await axios.delete(
-        `http://localhost:5000/api/user/${user.uid}/experience/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.delete(`${baseURL}/api/user/${user.uid}/experience/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       fetchExperience(); // Refresh after delete
     } catch (err) {

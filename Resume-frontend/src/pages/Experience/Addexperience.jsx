@@ -9,6 +9,7 @@ const AddExperienceForm = ({ onAdd }) => {
     endDate: "",
     description: "",
   });
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = auth.currentUser;
@@ -20,15 +21,11 @@ const AddExperienceForm = ({ onAdd }) => {
     try {
       const token = await user.getIdToken();
       const userId = user.uid;
-      await axios.post(
-        `http://localhost:5000/api/user/${userId}/experience`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post(`${baseURL}/api/user/${userId}/experience`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setFormData({
         role: "",
         company: "",

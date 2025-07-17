@@ -49,6 +49,7 @@ const PersonalInfo = () => {
     summary: "",
   });
   const [loading, setLoading] = useState(true);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {

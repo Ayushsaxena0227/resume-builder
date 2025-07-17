@@ -19,6 +19,7 @@ const Skills = () => {
   const [newSkill, setNewSkill] = useState("");
   const [loading, setLoading] = useState(true);
   const [loaderCount, setLoaderCount] = useState(6);
+  const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,7 +32,7 @@ const Skills = () => {
 
       try {
         const token = await user.getIdToken();
-        const res = await axios.get(`http://localhost:5000/api/user/skills`, {
+        const res = await axios.get(`${baseURL}/api/user/skills`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -56,10 +57,9 @@ const Skills = () => {
       }
     });
 
-    return () => unsubscribe(); //
+    return () => unsubscribe();
   }, []);
 
-  // ✅ Add new skill
   const handleAddSkill = async () => {
     if (!newSkill.trim()) return;
 
@@ -68,7 +68,7 @@ const Skills = () => {
       const token = await user.getIdToken();
 
       await axios.post(
-        `http://localhost:5000/api/user/skills`,
+        `${baseURL}/api/user/skills`,
         { name: newSkill },
         {
           headers: {
@@ -80,7 +80,7 @@ const Skills = () => {
       toast.success("Skill added!");
       setNewSkill("");
       // Re-fetch skills after adding
-      const res = await axios.get(`http://localhost:5000/api/user/skills`, {
+      const res = await axios.get(`${baseURL}/api/user/skills`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -92,13 +92,12 @@ const Skills = () => {
     }
   };
 
-  // ✅ Delete a skill
   const handleDelete = async (id) => {
     try {
       const user = auth.currentUser;
       const token = await user.getIdToken();
 
-      await axios.delete(`http://localhost:5000/api/user/skills/${id}`, {
+      await axios.delete(`${baseURL}/api/user/skills/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
