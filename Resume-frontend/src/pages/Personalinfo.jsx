@@ -3,6 +3,7 @@ import { getPersonalInfo, updatePersonalInfo } from "../services/userService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/Authcontext";
+
 // Personal Info Loader Component
 const PersonalInfoLoader = () => {
   return (
@@ -49,6 +50,7 @@ const PersonalInfo = () => {
     summary: "",
   });
   const [loading, setLoading] = useState(true);
+  const [hasShownWelcome, setHasShownWelcome] = useState(false);
   const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
 
   useEffect(() => {
@@ -58,17 +60,36 @@ const PersonalInfo = () => {
       try {
         const token = await currentUser.getIdToken();
         const info = await getPersonalInfo(currentUser.uid, token);
-        setFormData(info);
+
+        if (!info || Object.keys(info).length === 0) {
+          if (!hasShownWelcome) {
+            toast.info("Welcome! Add your personal info to get started.", {
+              autoClose: 3000, // Auto-dismiss after 3 seconds
+            });
+            setHasShownWelcome(true);
+          }
+        } else {
+          setFormData(info);
+        }
       } catch (err) {
         console.error(err);
-        toast.error("Failed to load personal info");
+        if (err.response?.status !== 404 && err.code !== "not-found") {
+          toast.error("Failed to load personal info. Please try again.");
+        } else {
+          if (!hasShownWelcome) {
+            toast.info("Welcome! Add your personal info to get started.", {
+              autoClose: 3000,
+            });
+            setHasShownWelcome(true);
+          }
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [currentUser]);
+  }, [currentUser, hasShownWelcome]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
