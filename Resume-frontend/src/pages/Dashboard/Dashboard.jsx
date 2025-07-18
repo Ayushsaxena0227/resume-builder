@@ -7,6 +7,7 @@ import { getAuth, signOut } from "firebase/auth";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ResumeScorer from "../Ai/ResumeScorer";
+import OnboardingModal from "../../components/OnboardingModal";
 
 const DashboardLoader = () => (
   <div className="min-h-screen text-white space-y-8 animate-pulse">
@@ -42,6 +43,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -60,6 +62,15 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    const auth = getAuth();
+
+    // Listen for auth state to ensure user is loaded
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user && !localStorage.getItem("hasSeenOnboarding")) {
+        setShowOnboarding(true);
+      }
+    });
+
     const fetchResume = async () => {
       if (!currentUser) return;
 
@@ -85,6 +96,8 @@ const Dashboard = () => {
     };
 
     fetchResume();
+
+    return () => unsubscribe(); // Cleanup listener
   }, [currentUser]);
 
   if (loading) return <DashboardLoader />;
@@ -97,6 +110,11 @@ const Dashboard = () => {
     );
   }
 
+  const closeOnboarding = () => {
+    setShowOnboarding(false);
+    localStorage.setItem("hasSeenOnboarding", "true");
+  };
+
   const {
     personalInfo = {},
     education = [],
@@ -108,6 +126,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen text-white space-y-8 px-4 sm:px-8 lg:px-16 py-10">
+      <OnboardingModal isOpen={showOnboarding} onClose={closeOnboarding} />
       <ToastContainer />
 
       <h2 className="text-4xl font-bold text-center">

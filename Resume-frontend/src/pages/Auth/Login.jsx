@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+} from "firebase/auth";
 import { auth } from "../../Firebase/firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -27,6 +30,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [hide, setHide] = useState(true);
+  const [showForgotForm, setShowForgotForm] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -47,6 +52,26 @@ const Login = () => {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast.error("Please enter your email.");
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      toast.success("Password reset email sent! Check your inbox.");
+      setShowForgotForm(false);
+      setResetEmail("");
+    } catch (err) {
+      console.error("Reset error:", err);
+      toast.error(
+        "Failed to send reset email. Check if the email is registered."
+      );
+    }
+  };
+
   return loading ? (
     <>
       <ToastContainer />
@@ -58,18 +83,17 @@ const Login = () => {
       style={{
         backgroundImage:
           "url('https://source.unsplash.com/random/1920x1080/?resume,professional')", // Replace with a free image URL or your asset
-        animation: "fadeIn 1s ease-in-out", // Simple fade-in animation
+        animation: "fadeIn 1s ease-in-out",
       }}
     >
       <ToastContainer />
       <form
         onSubmit={handleLogin}
-        className="bg-gray-900 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-700 w-full max-w-sm sm:max-w-md transform transition-all duration-300 hover:scale-105" // Added hover scale for interactivity
+        className="bg-gray-900 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-700 w-full max-w-sm sm:max-w-md transform transition-all duration-300 hover:scale-105"
       >
         <h2 className="text-2xl sm:text-3xl text-white mb-6 text-center font-bold">
           Welcome Back
         </h2>{" "}
-        {/* Slightly more engaging title */}
         <input
           type="email"
           placeholder="Email"
@@ -102,6 +126,41 @@ const Login = () => {
         >
           Login
         </button>
+        <p className="mt-2 text-sm text-gray-400 text-center">
+          <button
+            type="button"
+            onClick={() => setShowForgotForm(true)}
+            className="text-purple-400 hover:underline"
+          >
+            Forgot Password?
+          </button>
+        </p>
+        {showForgotForm && (
+          <div className="mt-4 p-4 bg-[#131025] rounded-md border border-gray-600">
+            <h3 className="text-white mb-2">Reset Password</h3>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="w-full mb-2 p-2 rounded bg-gray-800 text-white border border-gray-600"
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="w-full py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              Send Reset Link
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowForgotForm(false)}
+              className="mt-2 text-sm text-gray-400 hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
         <p className="mt-4 text-sm text-gray-400 text-center">
           Don’t have an account?{" "}
           <Link to="/signup" className="text-purple-400 hover:underline">

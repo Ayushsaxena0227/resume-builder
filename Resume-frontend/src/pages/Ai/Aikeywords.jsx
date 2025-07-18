@@ -5,16 +5,8 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import JobDescriptionAnalyzer from "./JobdescriptionAnalyzer";
-
-const roles = [
-  "Frontend Developer",
-  "Backend Developer",
-  "Full Stack Developer",
-  "Data Analyst",
-  "UI/UX Designer",
-  "DevOps Engineer",
-  "Machine Learning Engineer",
-];
+import roles from "../../Constants/roles";
+import Select from "react-select";
 
 const SmartAISuggestions = () => {
   const [role, setRole] = useState("");
@@ -26,6 +18,8 @@ const SmartAISuggestions = () => {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [savingSummary, setSavingSummary] = useState(false);
   const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
+
+  const roleOptions = roles.map((r) => ({ value: r, label: r }));
 
   useEffect(() => {
     const savedKeywords = localStorage.getItem("ai_keywords");
@@ -189,7 +183,7 @@ const SmartAISuggestions = () => {
         );
       }
 
-      toast.success(`✅ Added to ${section}`);
+      toast.success(` Added to ${section}`);
     } catch (err) {
       console.error(err);
       toast.error("Error updating section");
@@ -243,18 +237,48 @@ const SmartAISuggestions = () => {
         </h1>
 
         <div className="bg-[#0d081f] border border-purple-500 p-6 rounded-lg max-w-xl mx-auto w-full">
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            className="w-full p-3 rounded bg-gray-800 text-white border border-gray-600 mb-4"
-          >
-            <option value="">Select a Role</option>
-            {roles.map((r, idx) => (
-              <option key={idx} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
+          <Select
+            value={roleOptions.find((option) => option.value === role)}
+            onChange={(selected) => setRole(selected ? selected.value : "")}
+            options={roleOptions}
+            placeholder="Select a Role"
+            isSearchable={true}
+            menuPlacement="bottom"
+            className="mb-4"
+            classNamePrefix="select"
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: "#131025",
+                border: "1px solid #4b5563",
+                color: "white",
+                borderRadius: "0.375rem",
+                padding: "0.75rem",
+                cursor: "pointer",
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: "#131025",
+                color: "white",
+                border: "1px solid #4b5563",
+                zIndex: 9999,
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected ? "#4b5563" : "#131025",
+                color: "white",
+                "&:hover": { backgroundColor: "#4b5563" },
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "white",
+              }),
+              input: (base) => ({
+                ...base,
+                color: "white",
+              }),
+            }}
+          />
 
           <button
             onClick={runAI}

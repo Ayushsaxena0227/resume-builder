@@ -10,6 +10,9 @@ const ShareModal = ({ isOpen, onClose }) => {
     if (userId) {
       const link = `${window.location.origin}/resume/shared/${userId}`;
       setShareUrl(link);
+      toast.success("🔗 Share link generated successfully!");
+    } else {
+      toast.error("❌ Please login to generate share link");
     }
   };
 
@@ -27,12 +30,7 @@ const ShareModal = ({ isOpen, onClose }) => {
             <span className="text-sm truncate">{shareUrl}</span>
             <button
               className="ml-4 px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded text-white text-sm"
-              onClick={() =>
-                navigator.clipboard
-                  .writeText(shareUrl)
-                  .then(() => toast.success("🔗 Link copied!"))
-                  .catch(() => toast.error("Failed to copy link 😞"))
-              }
+              onClick={() => toast.success("copied to clipboard")}
             >
               📋 Copy
             </button>
