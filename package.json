@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "react-modal": "^3.16.3",
-    "react-select": "^5.10.2"
+    "react-modal": "^3.16.3"
   }
 }
