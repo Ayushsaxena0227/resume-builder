@@ -45,16 +45,16 @@ const FeedbackDashboard = () => {
         const token = await user.getIdToken();
 
         const res = await axios.get(`${baseURL}/api/user/resume/feedbacks`, {
-          // Removed trailing /
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        setFeedbackList(res.data);
+        setFeedbackList(res.data.feedbacks || []);
       } catch (err) {
         console.error("Error fetching feedback:", err);
         toast.error("Failed to load feedbacks.");
+        setFeedbackList([]);
       } finally {
         setLoading(false);
       }
@@ -75,9 +75,13 @@ const FeedbackDashboard = () => {
         <p className="text-gray-400">No feedback submitted yet.</p>
       ) : (
         <div className="grid gap-6 mr-6">
-          {feedbackList.map((item) => (
-            <FeedbackCard key={item.id} feedback={item} />
-          ))}
+          {Array.isArray(feedbackList) ? (
+            feedbackList.map((item) => (
+              <FeedbackCard key={item.id} feedback={item} />
+            ))
+          ) : (
+            <p className="text-red-400">Error: Invalid feedback data format.</p>
+          )}
         </div>
       )}
     </div>
