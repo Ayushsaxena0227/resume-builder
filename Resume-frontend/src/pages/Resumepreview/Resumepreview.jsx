@@ -178,7 +178,7 @@ const ResumePreview = () => {
           `${baseURL}/api/user/${userId}/resume`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        // console.log("Resume data fetched:", response.data);
+        console.log("Resume data fetched:", response.data);
         setResumeData(response.data);
       } catch (err) {
         console.error("Error fetching resume:", err);

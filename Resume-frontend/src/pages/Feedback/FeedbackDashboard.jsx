@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { auth } from "../../Firebase/firebase";
 import axios from "axios";
+import { toast } from "react-toastify";
 import FeedbackCard from "./FeedbackCard";
 
 const FeedbackDashboardLoader = ({ count = 4 }) => (
@@ -43,7 +44,8 @@ const FeedbackDashboard = () => {
       try {
         const token = await user.getIdToken();
 
-        const res = await axios.get(`${baseURL}/user/resume/feedbacks/`, {
+        const res = await axios.get(`${baseURL}/api/user/resume/feedbacks`, {
+          // Removed trailing /
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -52,6 +54,7 @@ const FeedbackDashboard = () => {
         setFeedbackList(res.data);
       } catch (err) {
         console.error("Error fetching feedback:", err);
+        toast.error("Failed to load feedbacks.");
       } finally {
         setLoading(false);
       }

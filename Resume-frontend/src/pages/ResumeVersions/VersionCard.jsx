@@ -57,7 +57,7 @@ const VersionCard = ({ version, onRestore, index }) => {
   return (
     <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
       <h3 className="text-lg font-semibold mb-2">
-        {version.versionName || "Version"} {index}
+        {version.versionName || "Version"}
       </h3>
 
       <p className="text-sm text-gray-400 mb-3">

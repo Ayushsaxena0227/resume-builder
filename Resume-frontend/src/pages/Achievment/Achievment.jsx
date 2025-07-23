@@ -73,7 +73,7 @@ const Achievements = () => {
       const token = await user.getIdToken();
       const userId = user.uid;
 
-      await axios.delete(`${baseURL}/${userId}/achievements/${id}`, {
+      await axios.delete(`${baseURL}/api/user/${userId}/achievements/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -17,7 +17,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         closeOnClick
         pauseOnHover
         draggable
-        theme="dark"
+        theme="light" // Changed to light for testing (visible on dark bg)
+        style={{ zIndex: 9999 }} // High z-index to be on top
       />
       <App />
     </AuthProvider>

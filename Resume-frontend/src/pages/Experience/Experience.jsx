@@ -3,6 +3,7 @@ import axios from "axios";
 import ExperienceCard from "./ExperienceCard";
 import AddExperienceForm from "./Addexperience";
 import { auth } from "../../Firebase/firebase";
+import { toast } from "react-toastify";
 
 const ExperienceLoader = ({ count = 3 }) => {
   return (
@@ -72,13 +73,27 @@ const Experience = () => {
     try {
       const token = await user.getIdToken();
 
-      await axios.delete(`${baseURL}/api/user/${user.uid}/experience/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await toast.promise(
+        axios.delete(`${baseURL}/api/user/${user.uid}/experience/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        {
+          pending: "Deleting experience...",
+          success: {
+            render: "Experience deleted! ",
+            className: "toast-success",
+          },
+          error: {
+            render: "Failed to delete experience ",
+            className: "toast-error",
+          },
+        }
+      );
 
       fetchExperience(); // Refresh after delete
+      console.log("Delete success - toast should have shown"); // Debug log
     } catch (err) {
       console.error("Error deleting experience:", err);
     }

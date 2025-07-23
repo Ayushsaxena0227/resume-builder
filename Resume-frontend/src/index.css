@@ -45,7 +45,21 @@ html {
   font-size: 1.5rem;
   cursor: pointer;
 }
+.toast-success {
+  background-color: white !important; /* Bright green */
+  color: black !important;
+  font-size: 16px !important;
+  z-index: 9999 !important; /* On top of everything */
+  padding: 20px !important;
+}
 
+.toast-error {
+  background-color: red !important;
+  color: white !important;
+  font-size: 16px !important;
+  z-index: 9999 !important;
+  padding: 20px !important;
+}
 @layer utilities {
   .clip-path-custom {
     clip-path: polygon(0 0, 100% 0, 100% 98%, 75% 95%, 0 100%);

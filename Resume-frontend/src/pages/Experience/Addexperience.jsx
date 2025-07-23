@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { auth } from "../../Firebase/firebase";
+
 const AddExperienceForm = ({ onAdd }) => {
   const [formData, setFormData] = useState({
     role: "",
@@ -10,6 +12,7 @@ const AddExperienceForm = ({ onAdd }) => {
     description: "",
   });
   const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = auth.currentUser;
@@ -21,11 +24,27 @@ const AddExperienceForm = ({ onAdd }) => {
     try {
       const token = await user.getIdToken();
       const userId = user.uid;
-      await axios.post(`${baseURL}/api/user/${userId}/experience`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+
+      // toast.promise with custom class
+      await toast.promise(
+        axios.post(`${baseURL}/api/user/${userId}/experience`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        {
+          pending: "Adding experience...",
+          success: {
+            render: "Experience added! 🎉",
+            className: "toast-success",
+          },
+          error: {
+            render: "Error adding experience 😞",
+            className: "toast-error",
+          },
+        }
+      );
+
       setFormData({
         role: "",
         company: "",
@@ -34,6 +53,7 @@ const AddExperienceForm = ({ onAdd }) => {
         description: "",
       });
       onAdd();
+      console.log("Add success - toast should have shown");
     } catch (err) {
       console.error("Error adding experience:", err);
     }

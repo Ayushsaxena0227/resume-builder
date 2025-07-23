@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify"; // No need for ToastContainer here - use global
 import "react-toastify/dist/ReactToastify.css";
 import { auth } from "../../Firebase/firebase";
 
@@ -24,18 +24,34 @@ const AddEducationForm = ({ onSuccess }) => {
     const user = auth.currentUser;
 
     if (!user) {
-      toast.error("You must be logged in to add education.");
+      toast.error("You must be logged in to add education.", {
+        className: "toast-error",
+      });
       return;
     }
 
     try {
       const token = await user.getIdToken();
-
-      await axios.post(`${baseURL}/api/user/${user.uid}/education`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await toast.promise(
+        axios.post(`${baseURL}/api/user/${user.uid}/education`, formData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        {
+          pending: "Adding education...",
+          success: {
+            render: () => {
+              return "Education added!";
+            },
+            className: "toast-success", // Custom visible class
+          },
+          error: {
+            render: "Error adding education 😞",
+            className: "toast-error",
+          },
+        }
+      );
 
       setFormData({
         degree: "",
@@ -44,10 +60,9 @@ const AddEducationForm = ({ onSuccess }) => {
         endYear: "",
         score: "",
       });
-      toast.success("Education added!");
       onSuccess();
+      console.log("Add success - toast should have shown"); // Debug log
     } catch (error) {
-      toast.error("Error adding Education");
       console.error("Error adding education:", error);
     }
   };
@@ -58,7 +73,6 @@ const AddEducationForm = ({ onSuccess }) => {
       className="bg-[#0d081f] p-6 rounded-lg shadow-lg border border-gray-700 space-y-4 max-w-xl mx-auto"
     >
       <div className="flex flex-col gap-2 text-black">
-        <ToastContainer />
         <input
           type="text"
           name="degree"

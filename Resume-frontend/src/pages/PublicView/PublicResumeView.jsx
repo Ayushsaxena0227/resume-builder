@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
+import { auth } from "../../Firebase/firebase"; // Update path as needed
 import FeedbackForm from "./FeedbackForm";
 
 const ResumeSkeletonLoader = () => {
@@ -29,148 +30,342 @@ const ResumeSkeletonLoader = () => {
 
 const PublicResumeView = () => {
   const { userId } = useParams();
+  const location = useLocation();
   const [resumeData, setResumeData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const baseURL = import.meta.env.VITE_URL || "http://localhost:5000";
+
+  // Prevent multiple requests for same userId
+  const hasFetchedRef = useRef(false);
+  const abortControllerRef = useRef(null);
 
   useEffect(() => {
     const fetchResume = async () => {
+      // Prevent duplicate calls
+      if (hasFetchedRef.current) {
+        console.log("🚫 Preventing duplicate request for userId:", userId);
+        return;
+      }
+
+      if (!userId) {
+        console.log("❌ No userId provided");
+        setError("No user ID provided");
+        setLoading(false);
+        return;
+      }
+
+      // Cancel any previous request
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Create new abort controller
+      abortControllerRef.current = new AbortController();
+      hasFetchedRef.current = true;
+
       try {
+        console.log("📡 Fetching PUBLIC resume for userId:", userId);
+
+        // Check if this is a preview mode from query params
+        const isPreview = location.search.includes("preview=true");
+
+        // Get current user to determine if they're the owner
+        const currentUser = auth.currentUser;
+        const isOwner = currentUser?.uid === userId;
+
+        // Build query parameters
+        const queryParams = new URLSearchParams({
+          public: "true",
+          ...(isOwner && { owner: "true" }),
+          ...(isPreview && { preview: "true" }),
+        });
+
+        // Prepare headers
+        const headers = {
+          "Content-Type": "application/json",
+        };
+
+        // Add auth token if user is logged in
+        if (currentUser) {
+          try {
+            const token = await currentUser.getIdToken();
+            headers.Authorization = `Bearer ${token}`;
+          } catch (tokenError) {
+            console.warn("Failed to get auth token:", tokenError);
+          }
+        }
+
+        console.log("Request params:", {
+          isPreview,
+          isOwner,
+          queryString: queryParams.toString(),
+        });
+
         const response = await axios.get(
-          `${baseURL}/api/user/resume/shared/${userId}`
+          `${baseURL}/api/user/resume/shared/${userId}?${queryParams.toString()}`,
+          {
+            signal: abortControllerRef.current.signal,
+            timeout: 10000,
+            headers,
+          }
         );
+
+        console.log("✅ Resume data fetched successfully:", response.data);
         setResumeData(response.data);
+        setError(null);
       } catch (error) {
-        console.error("Failed to fetch resume:", error);
+        // Don't set error if request was cancelled
+        if (error.name === "CanceledError" || error.code === "ERR_CANCELED") {
+          console.log("🚫 Request cancelled");
+          return;
+        }
+
+        console.error("❌ Failed to fetch resume:", error);
+        setError(error.response?.data?.error || "Failed to load resume");
+
+        // Allow retry on error by resetting the flag
+        hasFetchedRef.current = false;
       } finally {
         setLoading(false);
+        abortControllerRef.current = null;
       }
     };
 
-    fetchResume();
-  }, [userId]);
+    // Reset state when userId changes
+    if (userId) {
+      hasFetchedRef.current = false;
+      setResumeData(null);
+      setError(null);
+      setLoading(true);
+      fetchResume();
+    }
 
-  if (loading) return <ResumeSkeletonLoader />;
+    // Cleanup function
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [userId, baseURL, location.search]);
 
-  if (!resumeData)
-    return <div className="text-red-400 p-10">Resume not found.</div>;
+  // Add visibility change listener to prevent multiple requests when tab becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log("🔍 Page hidden");
+      } else {
+        console.log("👁️ Page visible - but not refetching (already have data)");
+      }
+    };
 
-  const {
-    personalInfo,
-    skills,
-    education,
-    experience,
-    projects,
-    achievements,
-  } = resumeData;
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  const handleRetry = () => {
+    hasFetchedRef.current = false;
+    setError(null);
+    setLoading(true);
+    setResumeData(null);
+    // The useEffect will trigger automatically when error state changes
+  };
+
+  if (loading) {
+    return <ResumeSkeletonLoader />;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white px-6 py-12 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-400 mb-4">Error</h2>
+          <p className="text-gray-300 mb-4">{error}</p>
+          <button
+            onClick={handleRetry}
+            className="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded transition-colors"
+          >
+            🔄 Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!resumeData) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white px-6 py-12 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-400 mb-4">
+            Resume Not Found
+          </h2>
+          <p className="text-gray-300">
+            The requested resume could not be found.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white px-6 py-12 font-sans">
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        👤 Public Resume View
-      </h1>
+      {/* Personal Info */}
+      {resumeData.personalInfo && (
+        <div className="bg-gray-800 p-6 rounded-lg shadow mb-10">
+          <h1 className="text-3xl font-bold mb-2">
+            {resumeData.personalInfo.fullName || "Name Not Available"}
+          </h1>
+          <p className="text-purple-400 mb-2">
+            {resumeData.personalInfo.email || "Email Not Available"}
+          </p>
+          <p className="text-gray-300 mb-2">
+            {resumeData.personalInfo.phone || "Phone Not Available"}
+          </p>
+          {resumeData.personalInfo.summary && (
+            <p className="text-gray-300 mt-4">
+              {resumeData.personalInfo.summary}
+            </p>
+          )}
+        </div>
+      )}
 
-      <div className="bg-gray-800 p-6 rounded-lg shadow mb-10">
-        <h2 className="text-2xl font-bold mb-2">{personalInfo?.fullName}</h2>
-        <p className="text-purple-300">{personalInfo?.email}</p>
-        <p className="text-sm text-gray-400">{personalInfo?.phone}</p>
-        <p className="text-sm text-gray-500">{personalInfo?.address}</p>
-      </div>
-
-      {skills?.length > 0 && (
-        <Section title="Skills">
-          <ul className="flex flex-wrap gap-2">
-            {skills.map((skill, i) => (
-              <li key={i} className="bg-purple-700 px-3 py-1 rounded text-sm">
-                {skill.name}
-              </li>
+      {/* Skills */}
+      {resumeData.skills && resumeData.skills.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-purple-400 mb-4">Skills</h2>
+          <div className="flex flex-wrap gap-2">
+            {resumeData.skills.map((skill, index) => (
+              <span
+                key={skill.id || index}
+                className="bg-purple-600 px-3 py-1 rounded-full text-sm"
+              >
+                {skill.name || skill.skill || "Skill"}
+              </span>
             ))}
-          </ul>
-        </Section>
+          </div>
+        </div>
       )}
 
-      {education?.length > 0 && (
-        <Section title="Education">
-          {education.map((edu, i) => (
-            <div key={i} className="mb-4">
-              <h3 className="text-xl font-semibold">{edu.degree}</h3>
-              <p className="text-purple-300">{edu.institute}</p>
-              <p className="text-sm text-gray-400">
-                {edu.startYear} - {edu.endYear}
+      {/* Experience */}
+      {resumeData.experience && resumeData.experience.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-purple-400 mb-4">
+            Experience
+          </h2>
+          {resumeData.experience.map((exp, index) => (
+            <div
+              key={exp.id || index}
+              className="mb-6 border-l-4 border-purple-600 pl-4"
+            >
+              <h3 className="text-xl font-semibold">
+                {exp.position || exp.title || "Position"}
+              </h3>
+              <p className="text-purple-300">{exp.company || "Company"}</p>
+              <p className="text-gray-400 text-sm mb-2">
+                {exp.startDate || "Start"} -{" "}
+                {exp.endDate || exp.current ? "Present" : "End"}
               </p>
-              {edu.score && <p className="text-sm">{edu.score}</p>}
+              {exp.description && (
+                <p className="text-gray-300">{exp.description}</p>
+              )}
             </div>
           ))}
-        </Section>
+        </div>
       )}
 
-      {experience?.length > 0 && (
-        <Section title="Experience">
-          {experience.map((exp, i) => (
-            <div key={i} className="mb-4">
-              <h3 className="text-xl font-semibold">{exp.role}</h3>
-              <p className="text-purple-300">{exp.company}</p>
-              <p className="text-sm text-gray-400">
-                {exp.startDate} to {exp.endDate}
+      {/* Education */}
+      {resumeData.education && resumeData.education.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-purple-400 mb-4">Education</h2>
+          {resumeData.education.map((edu, index) => (
+            <div
+              key={edu.id || index}
+              className="mb-6 border-l-4 border-purple-600 pl-4"
+            >
+              <h3 className="text-xl font-semibold">
+                {edu.degree || "Degree"}
+              </h3>
+              <p className="text-purple-300">
+                {edu.institution || edu.school || "Institution"}
               </p>
-              {exp.description && <p className="text-sm">{exp.description}</p>}
+              <p className="text-gray-400 text-sm">
+                {edu.startDate || edu.year || "Year"} - {edu.endDate || "End"}
+              </p>
+              {edu.gpa && <p className="text-gray-300">GPA: {edu.gpa}</p>}
             </div>
           ))}
-        </Section>
+        </div>
       )}
 
-      {projects?.length > 0 && (
-        <Section title="Projects">
-          {projects.map((project, i) => (
-            <div key={i} className="mb-4">
-              <h3 className="text-xl font-semibold">{project.title}</h3>
-              <p className="text-sm">{project.description}</p>
-              {Array.isArray(project.tech) && project.tech.length > 0 && (
-                <p className="text-sm text-purple-200">
-                  Tech: {project.tech.join(", ")}
+      {/* Projects */}
+      {resumeData.projects && resumeData.projects.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-purple-400 mb-4">Projects</h2>
+          {resumeData.projects.map((project, index) => (
+            <div
+              key={project.id || index}
+              className="mb-6 border-l-4 border-purple-600 pl-4"
+            >
+              <h3 className="text-xl font-semibold">
+                {project.name || project.title || "Project"}
+              </h3>
+              {project.technologies && (
+                <p className="text-purple-300 mb-2">
+                  Tech: {project.technologies}
                 </p>
+              )}
+              {project.description && (
+                <p className="text-gray-300 mb-2">{project.description}</p>
               )}
               {project.link && (
                 <a
                   href={project.link}
                   target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-500 underline text-sm"
+                  rel="noopener noreferrer"
+                  className="text-purple-400 hover:underline"
                 >
                   View Project
                 </a>
               )}
             </div>
           ))}
-        </Section>
+        </div>
       )}
 
-      {achievements?.length > 0 && (
-        <Section title="Achievements">
-          {achievements.map((ach, i) => (
-            <div key={i} className="mb-4">
-              <h3 className="text-lg font-semibold">{ach.title}</h3>
-              {ach.description && <p className="text-sm">{ach.description}</p>}
-              {ach.date && <p className="text-sm text-gray-400">{ach.date}</p>}
+      {/* Achievements */}
+      {resumeData.achievements && resumeData.achievements.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-purple-400 mb-4">
+            Achievements
+          </h2>
+          {resumeData.achievements.map((achievement, index) => (
+            <div
+              key={achievement.id || index}
+              className="mb-4 border-l-4 border-purple-600 pl-4"
+            >
+              <h3 className="text-lg font-semibold">
+                {achievement.title || "Achievement"}
+              </h3>
+              {achievement.description && (
+                <p className="text-gray-300">{achievement.description}</p>
+              )}
+              {achievement.date && (
+                <p className="text-gray-400 text-sm">{achievement.date}</p>
+              )}
             </div>
           ))}
-        </Section>
+        </div>
       )}
 
-      <div className="mt-12">
+      {/* Feedback Form */}
+      <div className="mt-16">
         <FeedbackForm userId={userId} />
       </div>
     </div>
   );
 };
-
-const Section = ({ title, children }) => (
-  <div className="mb-10">
-    <h2 className="text-2xl font-bold text-purple-500 border-b border-purple-700 pb-2 mb-4">
-      {title}
-    </h2>
-    {children}
-  </div>
-);
 
 export default PublicResumeView;
